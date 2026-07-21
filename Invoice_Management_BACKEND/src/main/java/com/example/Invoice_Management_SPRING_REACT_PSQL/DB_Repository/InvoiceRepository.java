@@ -10,7 +10,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
 	List<Invoice> findByNumber(String number);
 	
-	List<Invoice> findByArticleNumber(String articleNum);
+	List<Invoice> findByArticles_ArticleNumber(int articleNum);
 
 	List<Invoice> findBySupplierName(String supplierName);
 	

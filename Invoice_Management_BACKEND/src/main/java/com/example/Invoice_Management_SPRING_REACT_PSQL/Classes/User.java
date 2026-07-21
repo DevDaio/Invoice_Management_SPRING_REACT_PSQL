@@ -1,4 +1,5 @@
 package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;
+import com.example.Invoice_Management_SPRING_REACT_PSQL.Utility.Crypting;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,13 +17,21 @@ public class User {
 	@Column(name = "password", nullable = false)
 	private String password;
 
-	public User(String mail, String password) {
+	@Column(name = "role", nullable = false)
+	private String role;
+
+	public User(String mail, String password, String role) {
 		this.mail = mail;
-		this.password = password;
+		this.role = role;
+		setPassword(password);
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public boolean isAdmin(){
+		return role.equals("admin");
 	}
 
 	public String getMail() {
@@ -33,6 +42,10 @@ public class User {
 		return password;
 	}
 
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -41,8 +54,9 @@ public class User {
 		this.mail = mail;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public String setPassword(String password) {
+		this.password = Crypting.encryptPassword(password);
+		return this.password;
 	}
 
 }
