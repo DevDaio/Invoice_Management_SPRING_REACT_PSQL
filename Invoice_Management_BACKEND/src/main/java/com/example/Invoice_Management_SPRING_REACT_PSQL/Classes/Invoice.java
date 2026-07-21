@@ -1,0 +1,71 @@
+package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "invoices")
+public class Invoice {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private int id;
+
+	@Column(name = "number")
+	private String number;
+
+	@Column(name = "date", nullable = false)
+	private LocalDate date;
+
+	@OneToMany(mappedBy = "invoice")
+	private List<Article> articles = new ArrayList<>();
+
+	@ManyToOne
+	@JoinColumn(name = "supplier_id", nullable = false)
+	private Supplier supplier;
+
+	public Invoice(String number, LocalDate date, List<Article> articles) {
+		this.number = number;
+		this.date = date;
+		this.articles = articles;
+	}
+
+	public List<Article> getArticles() {
+		return new ArrayList<>(articles);
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+	}
+
+}

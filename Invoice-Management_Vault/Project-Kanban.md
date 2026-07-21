@@ -6,22 +6,26 @@ kanban-plugin: board
 
 ## Backlog
 
-- [ ] Repo aufsetzten
-- [ ] Entitäten aufsetzen
-- [ ] DB aufsetzen
-- [ ] Queries anlegen
+- [ ] Router und API Routes anlegen
+- [ ] Bcrypt in users implementieren
 
 
 ## In Progress
 
 - [ ] Dependencies einrichten @date{20-07-26}
-- [ ] README verfassen
-- [ ] MVPs schreiben
 
 
 ## Done
 
+- [x] Query-Klassen-Repos anlegen @date{21-07-26}
+- [x] CREATE_Tables.sql aanlegen
+- [x] react vite rohling aufsetzen @date{21-07-26}
+- [x] README verfassen @date{20-07-26}
+- [x] Hauptklassen angelegt
+- [x] Repo aufsetzten @date{20-07-26}
+- [x] DB aufsetzen
 - [x] API-Routes skizziert @date{20-07-26}
+- [x] MVPs schreiben
 - [x] DB skizze
 - [x] Springinit
 
