@@ -5,10 +5,12 @@ import java.util.List;
 
 public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
+	List<Supplier> findAll();
+	
 	List<Supplier> findByName(String name);
 
 	List<Supplier> findByInvoices_Number(String number);
 
-	List<Supplier> findByArticles_ArticleNumber(int articleNumber);
+	List<Supplier> findByArticleNumber(int articleNumber);
 	
 }
