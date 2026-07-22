@@ -6,6 +6,10 @@ Dieses Projekt entstand aus dem Wunsch, **Java und Spring Boot nicht nur theoret
 
 Es ist ein Lernprojekt, ein Werkzeug und ein Portfolio-Stück zugleich.
 
+## Kanban
+Projektmanagement mittels Kanban
+[Link zum Kanban-Board](./Invoice-Management_Vault/Project-Kanban.md)
+
 ## Warum Java?
 
 Java verbindet auf seltene Weise **low-level'sche Genauigkeit mit high-level'scher Ausdrucksstärke**. Wer Java beherrscht, hat nicht nur eine Sprache gelernt, sondern ein Ökosystem verstanden – von Speicherverwaltung und Typsicherheit bis hin zu Architekturmustern und Transaktionalität. In der Enterprise-Welt ist Java seit Jahrzehnten eine der beständigsten Größen, und Spring Boot ist der de facto Standard für moderne Java-Webentwicklung.
