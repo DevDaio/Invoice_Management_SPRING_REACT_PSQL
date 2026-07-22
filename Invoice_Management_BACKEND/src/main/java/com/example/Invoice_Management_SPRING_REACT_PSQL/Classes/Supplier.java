@@ -21,6 +21,9 @@ public class Supplier {
 	@OneToMany(mappedBy = "supplier")
 	private List<Invoice> invoices = new ArrayList<>();
 
+	protected Supplier() {
+	}
+
 	public Supplier(String name) {
 		this.name = name;
 	}

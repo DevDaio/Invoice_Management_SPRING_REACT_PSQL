@@ -19,7 +19,7 @@ public class Article {
 	@Column(name = "price_net", nullable = false)
 	private double priceNet;
 
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	@Column(name = "tax_type", nullable = false)
 	private TaxType tax;
 
@@ -37,6 +37,9 @@ public class Article {
 	@ManyToOne
 	@JoinColumn(name = "invoice_id", nullable = false)
 	private Invoice invoice;
+
+	protected Article() {
+	}
 
 	public Article(int id, String name, double priceNet, UnitType unit, TaxType tax, int quantity, Supplier supplier) {
 		this.articleNumber = id;

@@ -20,6 +20,9 @@ public class User {
 	@Column(name = "role", nullable = false)
 	private String role;
 
+	protected User() {
+	}
+
 	public User(String mail, String password, String role) {
 		this.mail = mail;
 		this.role = role;

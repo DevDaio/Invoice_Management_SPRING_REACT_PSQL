@@ -13,7 +13,10 @@ public class Invoice {
 	@Column(name = "id")
 	private int id;
 
-	@Column(name = "number")
+	@Column(name = "payed", nullable = false)
+	private boolean payed;
+	
+	@Column(name = "number", nullable = false)
 	private String number;
 
 	@Column(name = "date", nullable = false)
@@ -25,6 +28,9 @@ public class Invoice {
 	@ManyToOne
 	@JoinColumn(name = "supplier_id", nullable = false)
 	private Supplier supplier;
+
+	protected Invoice() {
+	}
 
 	public Invoice(String number, LocalDate date, List<Article> articles) {
 		this.number = number;
@@ -44,6 +50,10 @@ public class Invoice {
 		return id;
 	}
 
+	public boolean isPayed() {
+		return payed;
+	}
+
 	public String getNumber() {
 		return number;
 	}
@@ -58,6 +68,10 @@ public class Invoice {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public void setPayed(boolean payed) {
+		this.payed = payed;
 	}
 
 	public void setNumber(String number) {

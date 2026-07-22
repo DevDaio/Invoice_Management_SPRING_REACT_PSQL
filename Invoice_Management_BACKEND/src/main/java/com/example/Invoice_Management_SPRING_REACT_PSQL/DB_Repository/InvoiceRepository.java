@@ -5,7 +5,7 @@ import java.util.List;
 import java.time.LocalDate;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
-
+	
 	List<Invoice> findBySupplierId(int supplierId);
 
 	List<Invoice> findByNumber(String number);
@@ -18,6 +18,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
 	List<Invoice> findBySupplierIdAndDate(int supplierId, LocalDate date);
 
-
+	List<Invoice> findByPayed(boolean payed);
 	
 }
