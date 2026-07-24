@@ -1,15 +1,15 @@
 package com.example.Invoice_Management_SPRING_REACT_PSQL.Controller;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.context.annotation.Bean;
-import org.springframework.boot.CommandLineRunner;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.*;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.DB_Repository.*;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/")
 public class GetController {
 
     private final UserRepository userRepository;
@@ -25,29 +25,26 @@ public class GetController {
         this.invoiceRepository = invoiceRepository;
     }
 
-    // ─── startup: admin user anlegen ───
-    @Bean
-    public CommandLineRunner runner() {
-        return args -> {
-            List<User> users = userRepository.findAll();
-            if (users.isEmpty()) {
-                User user = new User("admin@admin.com", "admin", "admin");
-                userRepository.save(user);
-            }
-        };
-    }
 
     // ─── GET endpoints ───
 
     @GetMapping("/users")
-    public List<User> getUsers(@RequestParam(required = false) String mail) {
-        if (mail != null) return userRepository.findByMail(mail).stream().toList();
+    public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User nicht gefunden");
+        }
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/suppliers")
     public List<Supplier> getSuppliers(@RequestParam(required = false) String name) {
-        if (name != null) return supplierRepository.findByName(name);
+        if (name != null) return List.of(supplierRepository.findByName(name));
         return supplierRepository.findAll();
     }
 

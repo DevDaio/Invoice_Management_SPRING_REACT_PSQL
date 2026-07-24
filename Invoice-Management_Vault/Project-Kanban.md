@@ -13,14 +13,15 @@ kanban-plugin: board
 - [ ] Hosting: minimale funktionierende Version deployen
 - [ ] App.jsx aufräumen (Router + Routes einrichten)
 - [ ] Navbar anpassen (Links funktionsfähig machen)
-- [ ] CommandLineRunner: Admin anlegen wenn DB leer (count()==0)
 - [ ] Spring Security: Login gegen DB statt In-Memory
-- [ ] Admin-Routen: DELETE /api/users/{id} (nur für admin)
+- [ ] User-CRUD (GET /users/{id}, POST, PUT, DELETE)
+- [ ] POST /supplier + POST /article
+- [ ] PUT/DELETE für Invoice (payed + löschen)
 
 
 ## In Progress
 
-- [ ] Router und API Routes anlegen
+- [ ] Router und API Routes anlegen (Frontend-Seite)
 
 
 ## Done
@@ -47,6 +48,12 @@ kanban-plugin: board
 - [x] No-arg-Konstruktoren für alle @Entity-Klassen @date{22-07-26}
 - [x] EnumType.STRING für tax_type + SQL VARCHAR @date{22-07-26}
 - [x] CommandLineRunner: DB-Test erfolgreich (save + findAll) @date{22-07-26}
+- [x] GetController: REST-Endpoints mit @RequestParam-Filtern (@date{22-07-26})
+- [x] PostController: Login-Endpoint mit LoginRequest-DTO, Optional, ResponseEntity (@date{22-07-26})
+- [x] Repos aufgeräumt: findById/findBySupplierId entfernt, findByMail → Optional (@date{22-07-26})
+- [x] POST /invoice (+ ArticleRequest-DTO, createInvoice-Methode) (@date{22-07-26})
+- [x] SQL geupdated: article_number VARCHAR, invoices.supplier (@date{22-07-26})
+
 
 
 

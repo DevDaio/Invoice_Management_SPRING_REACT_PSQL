@@ -26,16 +26,18 @@ public class Invoice {
 	private List<Article> articles = new ArrayList<>();
 
 	@ManyToOne
-	@JoinColumn(name = "supplier_id", nullable = false)
+	@JoinColumn(name = "supplier", nullable = false, unique = false, updatable = true)
 	private Supplier supplier;
 
 	protected Invoice() {
 	}
 
-	public Invoice(String number, LocalDate date, List<Article> articles) {
+	public Invoice(String number, LocalDate date, List<Article> articles, Supplier supplier) {
 		this.number = number;
 		this.date = date;
 		this.articles = articles;
+		this.payed = false;
+		this.supplier = supplier;
 	}
 
 	public List<Article> getArticles() {
@@ -64,10 +66,6 @@ public class Invoice {
 
 	public void setDate(LocalDate date) {
 		this.date = date;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public void setPayed(boolean payed) {

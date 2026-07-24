@@ -7,7 +7,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
 	List<Supplier> findAll();
 	
-	List<Supplier> findByName(String name);
+	Supplier findByName(String name);
 
 	List<Supplier> findByInvoices_Number(String number);
 

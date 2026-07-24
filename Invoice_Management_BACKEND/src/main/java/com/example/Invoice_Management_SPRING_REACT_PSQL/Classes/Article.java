@@ -8,10 +8,10 @@ public class Article {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private Long id;
+	private int id;
 
 	@Column(name = "article_number", nullable = false)
-	private int articleNumber;
+	private String articleNumber;
 
 	@Column(name = "name", nullable = false, unique = true)
 	private String name;
@@ -41,8 +41,8 @@ public class Article {
 	protected Article() {
 	}
 
-	public Article(int id, String name, double priceNet, UnitType unit, TaxType tax, int quantity, Supplier supplier) {
-		this.articleNumber = id;
+	public Article(String articleNumber, String name, double priceNet, UnitType unit, TaxType tax, int quantity, Supplier supplier) {
+		this.articleNumber = articleNumber;
 		this.name = name;
 		this.priceNet = priceNet;
 		this.tax = tax;
@@ -51,11 +51,11 @@ public class Article {
 		this.supplier = supplier;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public int getArticleNumber() {
+	public String getArticleNumber() {
 		return articleNumber;
 	}
 
@@ -91,11 +91,11 @@ public class Article {
 		return this.unit;
 	}
 
-	public void setArticleNumber(int articleNumber) {
+	public void setArticleNumber(String articleNumber) {
 		this.articleNumber = articleNumber;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

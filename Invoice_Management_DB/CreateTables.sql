@@ -15,12 +15,12 @@ CREATE TABLE IF NOT EXISTS invoices (
     payed BOOLEAN NOT NULL DEFAULT false,
     number VARCHAR(255) NOT NULL,
     date DATE NOT NULL,
-    supplier_id INT NOT NULL REFERENCES suppliers(id)
+    supplier INT NOT NULL REFERENCES suppliers(id)
 );
 
 CREATE TABLE IF NOT EXISTS articles (
     id SERIAL PRIMARY KEY,
-    article_number INT NOT NULL,
+    article_number VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL UNIQUE,
     price_net DOUBLE PRECISION NOT NULL,
     tax_type VARCHAR(10) NOT NULL,
