@@ -1,5 +1,5 @@
 package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;
-import com.example.Invoice_Management_SPRING_REACT_PSQL.Utility.Crypting;
+import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.Crypting;
 import jakarta.persistence.*;
 
 @Entity

@@ -1,6 +1,6 @@
 package com.example.Invoice_Management_SPRING_REACT_PSQL.Controller;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.DB_Repository.*;
-import com.example.Invoice_Management_SPRING_REACT_PSQL.Utility.Crypting;
+import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.Crypting;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -92,6 +92,8 @@ public class PostController {
         if (!Crypting.checkPassword(user, request.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mail oder Passwort sind inkorrekt");
         }
+        // TODO: statt User-Objekt einen JWT-Token zurückgeben
+        // jwtService.generateToken(user.getMail()) → Map.of("token", token)
         return ResponseEntity.ok(user);
     }
 
