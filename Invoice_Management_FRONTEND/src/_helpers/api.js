@@ -13,7 +13,8 @@ export const clearToken = () => {
 };
 
 export async function api(endpoint, options = {}) {
-  const token = getToken();
+	const token = getToken();
+	console.log("Das ist mein token",token);
   const headers = { 'Content-Type': 'application/json' };
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -23,7 +24,7 @@ export async function api(endpoint, options = {}) {
   }
   const response = await fetch(`${BASE_URL}${endpoint}`, { ...options, headers });
   if (!response.ok) {
-    throw new Error(response.statusText);
+    throw new Error(await response.text());
   }
   if (response.status === 204) {
     return null;

@@ -11,12 +11,14 @@ export default function MainPage() {
   const { activeModal, selectedInvoice, openModal, closeModal } = useModal()
 
   return (
-    <div>
-      <button onClick={() => openModal('add')}>+ New Invoice</button>
-      <h3>Invoices</h3>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3>Invoices</h3>
+        <button className="btn btn-success" onClick={() => openModal('add')}>+ New Invoice</button>
+      </div>
       {invoices.length === 0 ? ( <p>No invoices yet.</p>) : 
-      (<table>
-          <thead>
+      (<table className="table table-striped">
+          <thead className="table-dark">
             <tr>
               <th>Number</th>
               <th>Date</th>
@@ -33,8 +35,8 @@ export default function MainPage() {
                 <td>{inv.supplier}</td>
                 <td>{inv.totalNet.toFixed(2)} €</td>
                 <td>
-                  <button onClick={() => openModal('edit', inv)}>Edit</button>
-                  <button onClick={() => openModal('remove', inv)}>Delete</button>
+                  <button className="btn btn-sm btn-outline-primary me-1" onClick={() => openModal('edit', inv)}>Edit</button>
+                  <button className="btn btn-sm btn-outline-danger" onClick={() => openModal('remove', inv)}>Delete</button>
                 </td>
               </tr>
             ))}

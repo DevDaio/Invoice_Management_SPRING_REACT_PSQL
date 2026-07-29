@@ -53,7 +53,7 @@ public class GetController {
                                      @RequestParam(required = false) Integer articleNumber,
                                      @RequestParam(required = false) String invoiceNumber) {
         if (name != null) return articleRepository.findByName(name);
-        if (articleNumber != null) return articleRepository.findByArticleNumber(articleNumber);
+        if (articleNumber != null) return articleRepository.findByArticleNumber(String.valueOf(articleNumber));
         if (invoiceNumber != null) return articleRepository.findByInvoiceNumber(invoiceNumber);
         return articleRepository.findAll();
     }
@@ -65,16 +65,16 @@ public class GetController {
                                      @RequestParam(required = false) Boolean payed,
                                      @RequestParam(required = false) Integer articleNumber) {
         if (supplierName != null && date != null && payed != null && articleNumber != null)
-            return invoiceRepository.findBySupplierNameAndDateAndPayedAndArticleNumber(supplierName, date, payed, articleNumber);
+            return invoiceRepository.findBySupplierNameAndDateAndPayedAndArticles_ArticleNumber(supplierName, date, payed, String.valueOf(articleNumber));
         if (supplierName != null && date != null && payed != null)
             return invoiceRepository.findBySupplierNameAndDateAndPayed(supplierName, date, payed);
         if (supplierName != null && date != null)
             return invoiceRepository.findBySupplierNameAndDate(supplierName, date);
         if (supplierName != null) return invoiceRepository.findBySupplierName(supplierName);
-        if (number != null) return invoiceRepository.findByNumber(number);
+        if (number != null) return List.of(invoiceRepository.findByNumber(number));
         if (date != null) return invoiceRepository.findByDate(date);
         if (payed != null) return invoiceRepository.findByPayed(payed);
-        if (articleNumber != null) return invoiceRepository.findByArticleNumber(articleNumber);
+        if (articleNumber != null) return invoiceRepository.findByArticles_ArticleNumber(String.valueOf(articleNumber));
         return invoiceRepository.findAll();
     }
 }

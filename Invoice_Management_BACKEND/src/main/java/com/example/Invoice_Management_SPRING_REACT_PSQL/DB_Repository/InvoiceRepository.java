@@ -8,9 +8,10 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
 	List<Invoice> findAll();
 
-	List<Invoice> findByNumber(String number);
 	
-	List<Invoice> findByArticleNumber(int articleNum);
+	Invoice findByNumber(String number);
+	
+	List<Invoice> findByArticles_ArticleNumber(String articleNum);
 
 	List<Invoice> findBySupplierName(String supplierName);
 	
@@ -22,7 +23,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
 	List<Invoice> findBySupplierNameAndDateAndPayed(String supplierName, LocalDate date, boolean payed);
 
-	List<Invoice> findBySupplierNameAndDateAndPayedAndArticleNumber(String supplierName, LocalDate date, boolean payed, int articleNumber);
+	List<Invoice> findBySupplierNameAndDateAndPayedAndArticles_ArticleNumber(String supplierName, LocalDate date, boolean payed, String articleNumber);
 
 	
 }

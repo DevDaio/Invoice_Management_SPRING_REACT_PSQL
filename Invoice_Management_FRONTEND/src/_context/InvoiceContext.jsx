@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import { api, getToken } from '../_helpers/api'
-
 const InvoiceContext = createContext(null)
 
 function mapBackendInvoice(inv) {
@@ -59,11 +58,26 @@ export function InvoiceProvider({ children }) {
     setInvoices(prev => [...prev, mapBackendInvoice(created)])
   }
 
-  const updateInvoice = (id, data) => {
-    setInvoices(prev => prev.map(inv => inv.id === id ? { ...inv, ...data } : inv))
+  const updateInvoice = async (id, data) => {
+    const body = {
+      number: data.number,
+      date: data.date,
+      supplierName: data.supplier,
+      articles: data.articles.map(a => ({
+        articleNumber: a.articleNumber,
+        name: a.name,
+        priceNet: parseFloat(a.priceNet),
+        tax: a.taxType,
+        unit: a.unitType,
+        quantity: parseInt(a.quantity),
+      })),
+    }
+    const updated = await api('/update/invoice/' + id, { method: 'PUT', body })
+    setInvoices(prev => prev.map(inv => inv.id === id ? mapBackendInvoice(updated) : inv))
   }
 
-  const deleteInvoice = (id) => {
+  const deleteInvoice = async (id) => {
+    await api('/invoice/' + id, { method: 'DELETE' })
     setInvoices(prev => prev.filter(inv => inv.id !== id))
   }
 

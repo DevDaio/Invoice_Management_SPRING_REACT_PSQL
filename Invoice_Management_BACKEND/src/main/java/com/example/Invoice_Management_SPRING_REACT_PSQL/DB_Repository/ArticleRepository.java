@@ -11,6 +11,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     List<Article> findByName(String name);
 
-    List<Article> findByArticleNumber(int articleNumber);
+    List<Article> findByArticleNumber(String articleNumber);
 
 }

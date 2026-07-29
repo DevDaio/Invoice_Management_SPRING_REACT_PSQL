@@ -16,17 +16,13 @@ Java verbindet auf seltene Weise **low-level'sche Genauigkeit mit high-level'sch
 
 Dieses Projekt ist der Versuch, diese Tiefe nicht nur zu lesen, sondern zu programmieren.
 
-## Entwicklungsphilosophie: Trad-Coding
+## Entwicklungsphilosophie
 
-Jede Zeile Code wird **selbst geschrieben, gelesen und verstanden**. Keine KI generiert die Implementierung. Der Code bleibt handgemacht – das Ziel ist nicht die schnelle Lieferung, sondern das **tiefe Verständnis**.
+Ich entwickle dieses Projekt allein. Mir war wichtig, dass am Ende keine Zeile Code im Projekt liegt, die ich nicht verstehe.
 
-Künstliche Intelligenz ist in diesem Projekt ein **unterstützender Tutor**:
-- Sie gibt Tipps und Denkanstöße (strukturiert als Skill "stepwise")
-- Sie hilft bei Ordnerstruktur- und Infrastruktur-Ideen
-- Sie erinnert an Konzepte und API-Details
-- Sie stellt Fragen, die zum nächsten Denkschritt führen
+Deshalb arbeite ich nicht mit fertig generierten Lösungen, sondern Schritt für Schritt: Ich bespreche mit einem KI-Assistenten (OpenCode) Konzepte und Alternativen, schreibe den Code dann aber selbst. Der Assistent erklärt, fragt nach und gibt Hinweise – das Programmieren bleibt meine Arbeit.
 
-Aber sie schreibt keinen Code. Dieses Prinzip wird in jeder Session aktiv durchgesetzt.
+Das ist langsamer als Code zu generieren, aber ich lerne dabei.
 
 ## Vault
 

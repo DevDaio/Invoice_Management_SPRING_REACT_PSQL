@@ -11,6 +11,6 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
 	List<Supplier> findByInvoices_Number(String number);
 
-	List<Supplier> findByArticleNumber(int articleNumber);
+	List<Supplier> findByInvoices_Articles_ArticleNumber(String articleNumber);
 	
 }
