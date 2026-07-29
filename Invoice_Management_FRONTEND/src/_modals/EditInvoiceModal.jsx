@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '../_helpers/api'
 
 const TAX_RATES = { Tax0: 0, Tax7: 0.07, Tax19: 0.19 }
 
@@ -17,21 +18,21 @@ const UNIT_OPTIONS = [
   { value: 'Position', label: 'Position' },
 ]
 
-const SUPPLIERS = [
-  'TechSupply GmbH',
-  'OfficeWorld AG',
-  'LogiStar e.K.',
-  'BuildMaster KG',
-]
-
 export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
 
   const [number, setNumber] = useState(invoice?.number || '')
   const [date, setDate] = useState(invoice?.date || '')
-  const [supplier, setSupplier] = useState(invoice?.supplier || SUPPLIERS[0])
+  const [supplier, setSupplier] = useState(invoice?.supplier || '')
   const [articles, setArticles] = useState(
     invoice?.articles || [{ articleNumber: '', name: '', priceNet: '', taxType: 'Tax19', unitType: 'Pieces', quantity: '1' }]
   )
+  const [suppliers, setSuppliers] = useState([])
+
+  useEffect(() => {
+    if (show) {
+      api('/suppliers').then(data => setSuppliers(data.map(s => s.name))).catch(() => {})
+    }
+  }, [show])
 
   const updateArticle = (index, field, value) => {
     setArticles(prev => prev.map((a, i) => i === index ? { ...a, [field]: value } : a))
@@ -82,7 +83,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       backgroundColor: 'rgba(0,0,0,0.5)'
     }} onClick={onClose}>
-      <div className="bg-white rounded shadow p-4" style={{ width: '750px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded shadow p-4" style={{ width: '1100px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
         <h4 className="mb-3">Edit Invoice</h4>
 
         <div className="row mb-3">
@@ -101,7 +102,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
             <input className="form-control form-control-sm" type="text" list="editSupplierList"
                    value={supplier} onChange={e => setSupplier(e.target.value)} />
             <datalist id="editSupplierList">
-              {SUPPLIERS.map(s => <option key={s} value={s} />)}
+              {suppliers.map(s => <option key={s} value={s} />)}
             </datalist>
           </div>
         </div>
@@ -115,15 +116,15 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
           <table className="table table-sm table-bordered mb-2">
             <thead className="table-light">
               <tr>
-                <th>#</th>
-                <th>Article No.</th>
+                <th style={{width:35}}>#</th>
+                <th style={{width:140}}>Article No.</th>
                 <th>Name</th>
-                <th>Net €</th>
-                <th>Tax %</th>
-                <th>Gross €</th>
-                <th>Unit</th>
-                <th>Qty</th>
-                <th></th>
+                <th style={{width:110}}>Net €</th>
+                <th style={{width:140}}>Tax %</th>
+                <th style={{width:120}}>Gross €</th>
+                <th style={{width:150}}>Unit</th>
+                <th style={{width:90}}>Qty</th>
+                <th style={{width:45}}></th>
               </tr>
             </thead>
             <tbody>
@@ -151,7 +152,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
                       {TAX_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
                   </td>
-                  <td className="text-end">{articleGross(article).toFixed(2)} €</td>
+                  <td className="text-end text-nowrap">{articleGross(article).toFixed(2)} €</td>
                   <td>
                     <select className="form-select form-select-sm" value={article.unitType}
                             onChange={e => updateArticle(i, 'unitType', e.target.value)}>
