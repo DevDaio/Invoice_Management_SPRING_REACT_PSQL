@@ -26,7 +26,7 @@ public class GetController {
     }
 
 
-    // ─── GET endpoints ───
+    
 
     @GetMapping("/users")
     public List<User> getUsers() {

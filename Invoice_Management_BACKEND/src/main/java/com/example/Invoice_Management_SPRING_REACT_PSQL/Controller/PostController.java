@@ -1,26 +1,26 @@
-package com.example.Invoice_Management_SPRING_REACT_PSQL.Controller;      // Package: Controller – hier liegen die REST-Endpoints
-import com.example.Invoice_Management_SPRING_REACT_PSQL.DB_Repository.*;   // Alle Repositories (User, Supplier, Article, Invoice)
-import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.*;        // Alle Security-Klassen (JwtService, Crypting, …)
-import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.*;         // Alle Entities (User, Supplier, Article, Invoice, …)
-import java.time.LocalDate;                                                // LocalDate: Datum (für Rechnungsdatum)
-import java.util.List;                                                     // List: Interface für Artikel-Liste
-import java.util.ArrayList;                                                // ArrayList: konkrete Implementierung für Artikel-Liste
-import java.util.Map;                                                      // Map.of() für Token-Rückgabe
-import org.springframework.http.HttpStatus;                                // HttpStatus: HTTP-Statuscodes (OK, UNAUTHORIZED, …)
-import org.springframework.http.ResponseEntity;                            // ResponseEntity: HTTP-Response mit Status + Body
-import org.springframework.web.bind.annotation.*;                          // @RestController, @RequestMapping, @PostMapping, …
+package com.example.Invoice_Management_SPRING_REACT_PSQL.Controller;      
+import com.example.Invoice_Management_SPRING_REACT_PSQL.DB_Repository.*;   
+import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.*;        
+import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.*;         
+import java.time.LocalDate;                                                
+import java.util.List;                                                     
+import java.util.ArrayList;                                                
+import java.util.Map;                                                      
+import org.springframework.http.HttpStatus;                                
+import org.springframework.http.ResponseEntity;                            
+import org.springframework.web.bind.annotation.*;                          
 
-@RestController                                                           // Sagt Spring: "Diese Klasse ist ein REST-Controller"
-@RequestMapping("/")                                                      // Alle Endpoints starten mit "/" (also /login, /invoice, …)
+@RestController                                                           
+@RequestMapping("/")                                                      
 public class PostController {
 
-    private final UserRepository userRepository;                          // Repository für User-Tabelle (Login, User anlegen)
-    private final SupplierRepository supplierRepository;                  // Repository für Supplier-Tabelle
-    private final ArticleRepository articleRepository;                    // Repository für Article-Tabelle
-    private final InvoiceRepository invoiceRepository;                    // Repository für Invoice-Tabelle
-    private final JwtService jwtService;                                  // JwtService: Token generieren (für Login)
+    private final UserRepository userRepository;                          
+    private final SupplierRepository supplierRepository;                  
+    private final ArticleRepository articleRepository;                    
+    private final InvoiceRepository invoiceRepository;                    
+    private final JwtService jwtService;                                  
 
-    public PostController(UserRepository userRepository, SupplierRepository supplierRepository,   // Konstruktor-Injektion
+    public PostController(UserRepository userRepository, SupplierRepository supplierRepository,   
                           ArticleRepository articleRepository, InvoiceRepository invoiceRepository,
                           JwtService jwtService) {
         this.userRepository = userRepository;
@@ -30,30 +30,30 @@ public class PostController {
         this.jwtService = jwtService;
     }
 
-    // ─── DTOs ───                                                        // DTO-Klassen: Daten-Transfer-Objekte (werden aus JSON gemappt)
+    
 
-    public static class LoginRequest {                                     // DTO für POST /login: Mail + Passwort
-        private String mail;                                               // User-Mail (aus JSON: "mail": "...")
-        private String password;                                           // User-Passwort (aus JSON: "password": "...")
+    public static class LoginRequest {                                     
+        private String mail;                                               
+        private String password;                                           
 
-        public LoginRequest(String mail, String password) {                // Konstruktor für JSON-Deserialisierung
+        public LoginRequest(String mail, String password) {                
             this.mail = mail;
             this.password = password;
         }
 
-        public String getMail() { return mail; }                           // Getter für Spring/Jackson
-        public void setMail(String mail) { this.mail = mail; }             // Setter für Spring/Jackson
-        public String getPassword() { return password; }                   // Getter für Spring/Jackson
-        public void setPassword(String password) { this.password = password; } // Setter für Spring/Jackson
+        public String getMail() { return mail; }                           
+        public void setMail(String mail) { this.mail = mail; }             
+        public String getPassword() { return password; }                   
+        public void setPassword(String password) { this.password = password; } 
     }
 
-    public static class ArticleRequest {                                   // DTO für POST /invoice: einzelner Artikel im JSON-Array
-        private String articleNumber;                                      // Artikelnummer
-        private String name;                                               // Artikelname
-        private double priceNet;                                           // Nettopreis
-        private String tax;                                                // Steuersatz (z.B. "STANDARD", "REDUCED")
-        private String unit;                                               // Einheit (z.B. "PIECE", "HOUR")
-        private int quantity;                                              // Menge
+    public static class ArticleRequest {                                   
+        private String articleNumber;                                      
+        private String name;                                               
+        private double priceNet;                                           
+        private String tax;                                                
+        private String unit;                                               
+        private int quantity;                                              
 
         public String getArticleNumber() { return articleNumber; }
         public void setArticleNumber(String articleNumber) { this.articleNumber = articleNumber; }
@@ -69,11 +69,11 @@ public class PostController {
         public void setQuantity(int quantity) { this.quantity = quantity; }
     }
 
-    public static class InvoiceRequest {                                   // DTO für POST /invoice: Rechnung inkl. Artikel-Array
-        private String invoiceNumber;                                      // Rechnungsnummer
-        private LocalDate date;                                            // Rechnungsdatum
-        private String supplierName;                                       // Lieferantenname
-        private List<ArticleRequest> articles;                             // Liste der Artikel in dieser Rechnung
+    public static class InvoiceRequest {                                   
+        private String invoiceNumber;                                      
+        private LocalDate date;                                            
+        private String supplierName;                                       
+        private List<ArticleRequest> articles;                             
 
         public String getInvoiceNumber() { return invoiceNumber; }
         public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }
@@ -85,63 +85,63 @@ public class PostController {
         public void setArticles(List<ArticleRequest> articles) { this.articles = articles; }
     }
 
-    // ─── Endpoints ───                                                   // Ab hier: die REST-Endpoints
+    
 
-    @PostMapping("/login")                                                 // POST http://localhost:8080/login – User einloggen
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {   // @RequestBody: JSON → LoginRequest (Mail + Passwort)
-        User user = userRepository.findByMail(request.getMail())           // User in DB suchen anhand der Mail
-                .orElse(null);                                             // Nicht gefunden → null (statt Exception)
+    @PostMapping("/login")                                                 
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {   
+        User user = userRepository.findByMail(request.getMail())           
+                .orElse(null);                                             
 
-        if (user == null) {                                                // User existiert nicht in der DB
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)          // HTTP 401: nicht autorisiert
-                    .body("Mail oder Passwort sind inkorrekt");            // Fehlermeldung (absichtlich vage: "Mail oder Passwort")
+        if (user == null) {                                                
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)          
+                    .body("Mail oder Passwort sind inkorrekt");            
         }
 
-        if (!Crypting.checkPassword(user, request.getPassword())) {       // User existiert, aber Passwort ist falsch
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)          // HTTP 401: nicht autorisiert
-                    .body("Mail oder Passwort sind inkorrekt");            // Gleiche Fehlermeldung wie oben (kein Hinweis, welches falsch ist)
+        if (!Crypting.checkPassword(user, request.getPassword())) {       
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)          
+                    .body("Mail oder Passwort sind inkorrekt");            
         }
 
-        return ResponseEntity.ok(                                          // HTTP 200: Erfolg
-                Map.of("token", jwtService.generateToken(user.getMail(), user.getRole()))  // Gibt JSON zurück: {"token": "eyJhbGciOiJIUzI1NiJ9..."}
+        return ResponseEntity.ok(                                          
+                Map.of("token", jwtService.generateToken(user.getMail(), user.getRole()))  
         );
     }
 
-    @PostMapping("/invoice")                                               // POST http://localhost:8080/invoice – Rechnung anlegen
-    public ResponseEntity<?> createInvoice(@RequestBody InvoiceRequest request) { // JSON → InvoiceRequest (Rechnung + Artikel)
-        if (request.getArticles() == null || request.getArticles().isEmpty()) { // Validierung: mindestens ein Artikel nötig
-            return ResponseEntity.badRequest()                             // HTTP 400: Bad Request
+    @PostMapping("/invoice")                                               
+    public ResponseEntity<?> createInvoice(@RequestBody InvoiceRequest request) { 
+        if (request.getArticles() == null || request.getArticles().isEmpty()) { 
+            return ResponseEntity.badRequest()                             
                     .body("Rechnung muss mindestens einen Artikel enthalten");
         }
 
-        Supplier supplier = supplierRepository.findByName(request.getSupplierName()); // Lieferant in DB suchen
-        if (supplier == null) {                                            // Lieferant existiert noch nicht
-            supplier = new Supplier(request.getSupplierName());            // Neuen Lieferanten anlegen
-            supplierRepository.save(supplier);                              // In DB speichern (damit er eine ID bekommt)
+        Supplier supplier = supplierRepository.findByName(request.getSupplierName()); 
+        if (supplier == null) {                                            
+            supplier = new Supplier(request.getSupplierName());            
+            supplierRepository.save(supplier);                              
         }
 
-        List<Article> articles = new ArrayList<>();                        // Liste für die Article-Entities (aus den DTOs)
-        for (ArticleRequest ar : request.getArticles()) {                  // Jedes ArticleRequest → Article-Entity
+        List<Article> articles = new ArrayList<>();                        
+        for (ArticleRequest ar : request.getArticles()) {                  
             Article article = new Article(ar.getArticleNumber(), ar.getName(), ar.getPriceNet(),
                 UnitType.valueOf(ar.getUnit()), TaxType.valueOf(ar.getTax()), ar.getQuantity(), supplier);
-            articles.add(article);                                         // Article zur Liste hinzufügen
+            articles.add(article);                                         
         }
 
-        Invoice invoice = new Invoice(request.getInvoiceNumber(), request.getDate(), articles, supplier); // Invoice-Entity bauen
-        invoiceRepository.save(invoice);                                   // Rechnung in DB speichern
+        Invoice invoice = new Invoice(request.getInvoiceNumber(), request.getDate(), articles, supplier); 
+        invoiceRepository.save(invoice);                                   
 
-        for (Article a : articles) {                                       // Nach dem Speichern: Bidirektionale Verknüpfung setzen
-            a.setInvoice(invoice);                                         // Jeder Artikel bekommt die Invoice-ID
-            articleRepository.save(a);                                     // Artikel in DB speichern
+        for (Article a : articles) {                                       
+            a.setInvoice(invoice);                                         
+            articleRepository.save(a);                                     
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED)                   // HTTP 201: Created
-                .body(invoice);                                            // Die gespeicherte Rechnung als JSON zurückgeben
+        return ResponseEntity.status(HttpStatus.CREATED)                   
+                .body(invoice);                                            
     }
 
-    public static class UserRequest {                                      // DTO für POST /newUser: Mail + Passwort für neuen User
-        String mail;                                                       // User-Mail
-        String password;                                                   // User-Passwort
+    public static class UserRequest {                                      
+        String mail;                                                       
+        String password;                                                   
 
         public String getMail() { return mail; }
         public void setMail(String mail) { this.mail = mail; }
@@ -149,15 +149,15 @@ public class PostController {
         public void setPassword(String password) { this.password = password; }
     }
 
-    @PostMapping("/newUser")                                               // POST http://localhost:8080/newUser – neuen User anlegen
-    public ResponseEntity<?> createUser(@RequestBody UserRequest request) { // JSON → UserRequest (Mail + Passwort)
-        if (userRepository.findByMail(request.getMail()).isPresent()) {    // Prüfen: Gibt es schon einen User mit dieser Mail?
-            return ResponseEntity.status(HttpStatus.CONFLICT)              // HTTP 409: Conflict
-                    .body("User existiert bereits");                       // Fehlermeldung
+    @PostMapping("/newUser")                                               
+    public ResponseEntity<?> createUser(@RequestBody UserRequest request) { 
+        if (userRepository.findByMail(request.getMail()).isPresent()) {    
+            return ResponseEntity.status(HttpStatus.CONFLICT)              
+                    .body("User existiert bereits");                       
         }
-        User user = new User(request.getMail(), request.getPassword(), "USER"); // Neuen User mit Rolle "USER" anlegen
-        userRepository.save(user);                                         // In DB speichern (Passwort wird im Konstruktor gehasht)
-        return ResponseEntity.status(HttpStatus.CREATED)                   // HTTP 201: Created
-                .body(user);                                               // Den neuen User als JSON zurückgeben
+        User user = new User(request.getMail(), request.getPassword(), "USER"); 
+        userRepository.save(user);                                         
+        return ResponseEntity.status(HttpStatus.CREATED)                   
+                .body(user);                                               
     }
 }

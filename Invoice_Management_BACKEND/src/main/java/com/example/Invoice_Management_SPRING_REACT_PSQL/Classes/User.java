@@ -1,69 +1,69 @@
-package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;   // Package: Classes – JPA-Entities (Datenbank-Tabellen)
-import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.Crypting; // Crypting: eigene Utility für Passwort-Hashing
-import jakarta.persistence.*;                                         // JPA: @Entity, @Table, @Id, @GeneratedValue, @Column
+package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;   
+import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.Crypting; 
+import jakarta.persistence.*;                                         
 
-@Entity                                                               // Sagt JPA: "Diese Klasse ist eine Datenbank-Tabelle"
-@Table(name = "users")                                                // Tabellenname in der DB = "users"
+@Entity                                                               
+@Table(name = "users")                                                
 public class User {
 
-    @Id                                                               // = Primary Key in der DB
-    @GeneratedValue(strategy = GenerationType.IDENTITY)               // Auto-Increment: DB generiert die ID automatisch
-    @Column(name = "id")                                              // Spaltenname in der DB = "id"
-    private int id;                                                   // Eindeutige ID (wird von der DB vergeben)
+    @Id                                                               
+    @GeneratedValue(strategy = GenerationType.IDENTITY)               
+    @Column(name = "id")                                              
+    private int id;                                                   
 
-    @Column(name = "mail", nullable = false)                           // Spalte "mail", darf NICHT leer sein (NOT NULL)
-    private String mail;                                              // E-Mail-Adresse des Users (auch = Login-Name)
+    @Column(name = "mail", nullable = false)                           
+    private String mail;                                              
 
-    @Column(name = "password", nullable = false)                       // Spalte "password", darf NICHT leer sein
-    private String password;                                          // Gehashter Password-String (NIE Klartext!)
+    @Column(name = "password", nullable = false)                       
+    private String password;                                          
 
-    @Column(name = "role", nullable = false)                           // Spalte "role", darf NICHT leer sein
-    private String role;                                              // Rolle: "ADMIN" oder "USER" (bestimmt Berechtigungen)
+    @Column(name = "role", nullable = false)                           
+    private String role;                                              
 
-    protected User() {                                               // Leerer Konstruktor (von JPA benötigt, protected = nicht von außen)
+    protected User() {                                               
     }
 
-    public User(String mail, String password, String role) {          // Öffentlicher Konstruktor (wird vom Code verwendet)
-        this.mail = mail;                                             // Mail setzen
-        this.role = role;                                             // Rolle setzen (z.B. "ADMIN" oder "USER")
-        setPassword(password);                                        // Passwort setzen (wird dabei gehasht!)
+    public User(String mail, String password, String role) {          
+        this.mail = mail;                                             
+        this.role = role;                                             
+        setPassword(password);                                        
     }
 
-    public int getId() {                                             // Getter für die ID
+    public int getId() {                                             
         return id;
     }
 
-    public boolean isAdmin(){                                         // Prüft ob der User Admin ist
-        return role.equals("ADMIN");                                  // true wenn Rolle = "ADMIN"
+    public boolean isAdmin(){                                         
+        return role.equals("ADMIN");                                  
     }
 
-    public String getRole() {                                        // Getter für die Rolle
+    public String getRole() {                                        
         return role;
     }
 
-    public String getMail() {                                        // Getter für die Mail
+    public String getMail() {                                        
         return mail;
     }
 
-    public String getPassword() {                                    // Getter für das Passwort
+    public String getPassword() {                                    
         return password;
     }
 
-    public void setRole(String role) {                               // Setter für die Rolle
+    public void setRole(String role) {                               
         this.role = role;
     }
 
-    public void setId(int id) {                                       // Setter für die ID
+    public void setId(int id) {                                       
         this.id = id;
     }
 
-    public void setMail(String mail) {                               // Setter für die Mail
+    public void setMail(String mail) {                               
         this.mail = mail;
     }
 
-    public String setPassword(String password) {                     // Setter für das Passwort (HASHED!)
-        this.password = Crypting.encryptPassword(password);           // Passwort wird VOR dem Speichern gehasht (NIEMALS Klartext!)
-        return this.password;                                         // Gibt den Hash zurück (nützlich für Logging/Prüfung)
+    public String setPassword(String password) {                     
+        this.password = Crypting.encryptPassword(password);           
+        return this.password;                                         
     }
 
 }
