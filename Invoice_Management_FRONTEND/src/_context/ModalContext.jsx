@@ -5,6 +5,7 @@ const ModalContext = createContext(null)
 export function ModalProvider({ children }) {
   const [activeModal, setActiveModal] = useState(null)
   const [selectedInvoice, setSelectedInvoice] = useState(null)
+  const [showSettings, setShowSettings] = useState(false)
   const openModal = (name, invoice = null) => {
     setActiveModal(name)
     setSelectedInvoice(invoice)
@@ -13,9 +14,11 @@ export function ModalProvider({ children }) {
     setActiveModal(null)
     setSelectedInvoice(null)
   }
+  const openSettings = () => setShowSettings(true)
+  const closeSettings = () => setShowSettings(false)
 
   return (
-    <ModalContext.Provider value={{ activeModal, selectedInvoice, openModal, closeModal }}>
+    <ModalContext.Provider value={{ activeModal, selectedInvoice, showSettings, openModal, closeModal, openSettings, closeSettings }}>
       {children}
     </ModalContext.Provider>
   )

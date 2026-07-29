@@ -4,11 +4,27 @@ import { useModal } from '../_context/ModalContext'
 import AddInvoiceModal from '../_modals/AddInvoiceModal'
 import EditInvoiceModal from '../_modals/EditInvoiceModal'
 import RemoveInvoiceModal from '../_modals/RemoveInvoiceModal'
+import SettingsModal from '../_modals/SettingsModal'
 
 export default function MainPage() {
 
   const { invoices, addInvoice, updateInvoice, deleteInvoice } = useInvoices()
-  const { activeModal, selectedInvoice, openModal, closeModal } = useModal()
+  const { activeModal, selectedInvoice, showSettings, openModal, closeModal, closeSettings } = useModal()
+
+  const handleAdd = async (data) => {
+    await addInvoice(data)
+    closeModal()
+  }
+
+  const handleEdit = async (id, data) => {
+    await updateInvoice(id, data)
+    closeModal()
+  }
+
+  const handleDelete = async (id) => {
+    await deleteInvoice(id)
+    closeModal()
+  }
 
   return (
     <div className="container mt-4">
@@ -23,7 +39,9 @@ export default function MainPage() {
               <th>Number</th>
               <th>Date</th>
               <th>Supplier</th>
-              <th>Total</th>
+              <th>Net</th>
+              <th>Tax</th>
+              <th>Gross</th>
               <th></th>
               </tr>
           </thead>
@@ -34,6 +52,8 @@ export default function MainPage() {
                 <td>{inv.date}</td>
                 <td>{inv.supplier}</td>
                 <td>{inv.totalNet.toFixed(2)} €</td>
+                <td>{inv.totalTax.toFixed(2)} €</td>
+                <td>{inv.totalGross.toFixed(2)} €</td>
                 <td>
                   <button className="btn btn-sm btn-outline-primary me-1" onClick={() => openModal('edit', inv)}>Edit</button>
                   <button className="btn btn-sm btn-outline-danger" onClick={() => openModal('remove', inv)}>Delete</button>
@@ -44,9 +64,10 @@ export default function MainPage() {
         </table>
       )}
 
-      <AddInvoiceModal show={activeModal === 'add'} onClose={closeModal} onSave={addInvoice} />
-      <EditInvoiceModal show={activeModal === 'edit'} onClose={closeModal} onSave={updateInvoice} invoice={selectedInvoice} />
-      <RemoveInvoiceModal show={activeModal === 'remove'} onClose={closeModal} onConfirm={deleteInvoice} invoice={selectedInvoice} />
+      <AddInvoiceModal show={activeModal === 'add'} onClose={closeModal} onSave={handleAdd} />
+      <EditInvoiceModal key={selectedInvoice?.id} show={activeModal === 'edit'} onClose={closeModal} onSave={handleEdit} invoice={selectedInvoice} />
+      <RemoveInvoiceModal show={activeModal === 'remove'} onClose={closeModal} onConfirm={handleDelete} invoice={selectedInvoice} />
+      <SettingsModal show={showSettings} onClose={closeSettings} />
     </div>
   )
 }

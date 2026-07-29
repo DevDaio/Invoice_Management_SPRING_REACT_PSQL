@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { api } from '../_helpers/api'
 
+const TAX_RATES = { Tax0: 0, Tax7: 0.07, Tax19: 0.19 }
+
 const TAX_OPTIONS = [
   { value: 'Tax0', label: '0%' },
   { value: 'Tax7', label: '7%' },
@@ -43,17 +45,7 @@ export default function AddInvoiceModal({ show, onClose, onSave }) {
   const [articles, setArticles] = useState([{ ...emptyArticle }])
 
   const handleSave = async () => {
-    onSave({ number, date, supplier, articles, totalNet })
-    try {
-      const response = await api('/invoices', {
-        method: 'POST',
-        body: { number, date, supplier, articles, totalNet }
-      })
-      console.log('Success:', response)
-    } catch (error) {
-      console.error('Error:', error)
-    }
-    
+   await onSave({ number, date, supplier, articles, totalNet })
   }
 
   const updateArticle = (index, field, value) => {
@@ -70,10 +62,30 @@ export default function AddInvoiceModal({ show, onClose, onSave }) {
     }
   }
 
+  const articleGross = (a) => {
+    const price = parseFloat(a.priceNet) || 0
+    return price * (1 + (TAX_RATES[a.taxType] ?? 0))
+  }
+
+  const articleTax = (a) => {
+    const price = parseFloat(a.priceNet) || 0
+    return price * (TAX_RATES[a.taxType] ?? 0)
+  }
+
   const totalNet = articles.reduce((sum, a) => {
     const price = parseFloat(a.priceNet) || 0
     const qty = parseInt(a.quantity) || 0
     return sum + price * qty
+  }, 0)
+
+  const totalGross = articles.reduce((sum, a) => {
+    const qty = parseInt(a.quantity) || 0
+    return sum + articleGross(a) * qty
+  }, 0)
+
+  const totalTax = articles.reduce((sum, a) => {
+    const qty = parseInt(a.quantity) || 0
+    return sum + articleTax(a) * qty
   }, 0)
 
   if (!show) return null
@@ -122,7 +134,8 @@ export default function AddInvoiceModal({ show, onClose, onSave }) {
                 <th>Article No.</th>
                 <th>Name</th>
                 <th>Net €</th>
-                <th>Tax</th>
+                <th>Tax %</th>
+                <th>Gross €</th>
                 <th>Unit</th>
                 <th>Qty</th>
                 <th></th>
@@ -153,6 +166,7 @@ export default function AddInvoiceModal({ show, onClose, onSave }) {
                       {TAX_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
                   </td>
+                  <td className="text-end">{articleGross(article).toFixed(2)} €</td>
                   <td>
                     <select className="form-select form-select-sm" value={article.unitType}
                             onChange={e => updateArticle(i, 'unitType', e.target.value)}>
@@ -176,7 +190,11 @@ export default function AddInvoiceModal({ show, onClose, onSave }) {
         </div>
 
         <div className="text-end mb-3">
-          <strong>Net total: {totalNet.toFixed(2)} €</strong>
+          <strong>Net: {totalNet.toFixed(2)} €</strong>
+          &nbsp;|&nbsp;
+          <strong>Tax: {totalTax.toFixed(2)} €</strong>
+          &nbsp;|&nbsp;
+          <strong>Gross: {totalGross.toFixed(2)} €</strong>
         </div>
 
         <div className="d-flex justify-content-end gap-2">

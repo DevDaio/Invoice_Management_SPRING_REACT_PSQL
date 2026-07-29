@@ -14,9 +14,9 @@ export function AuthProvider({ children }) {
     if (savedToken) {
       try {
         const payload = JSON.parse(atob(savedToken.split('.')[1]))
-        setUser({ email: payload.sub })
+        setUser({ email: payload.sub, role: payload.role })
       } catch {
-        setUser({ email: 'unknown' })
+        setUser({ email: 'unknown', role: 'USER' })
       }
       setIsLoggedIn(true)
     }
@@ -28,7 +28,8 @@ export function AuthProvider({ children }) {
       body: { mail: email, password },
     })
     setToken(res.token)
-    setUser({ email })
+    const payload = JSON.parse(atob(res.token.split('.')[1]))
+    setUser({ email, role: payload.role })
     setIsLoggedIn(true)
   }
 

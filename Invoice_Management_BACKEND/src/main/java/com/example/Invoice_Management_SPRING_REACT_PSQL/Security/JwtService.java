@@ -23,12 +23,13 @@ public class JwtService {                                               // Servi
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));      // Base64 → byte[] → HMAC-SHA-Key (prüft Mindestlänge 256 Bit)
     }
 
-    public String generateToken(String mail) {                          // Erzeugt einen signierten JWT für eine User-Mail
+    public String generateToken(String mail, String role) {             // Erzeugt einen signierten JWT für eine User-Mail
         Date now = new Date();                                          // Aktuelle Systemzeit für "issuedAt"
         Date expiration = new Date(now.getTime() + expirationMs);       // now + 24h = Ablaufzeitpunkt
 
         return Jwts.builder()                                           // Fluent Builder: baut Schritt für Schritt den Token
                 .subject(mail)                                          // "sub"-Claim: die User-Mail (später mit getSubject() lesbar)
+                .claim("role", role)                                    // "role"-Claim: die User-Rolle (z.B. "ADMIN" oder "USER")
                 .issuedAt(now)                                          // "iat"-Claim: Erstellungszeitpunkt
                 .expiration(expiration)                                 // "exp"-Claim: Ablaufzeitpunkt (Parser prüft automatisch)
                 .signWith(getSigningKey())                              // Header + Payload mit HMAC-SHA256 signieren

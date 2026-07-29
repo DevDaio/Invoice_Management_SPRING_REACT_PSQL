@@ -3,6 +3,18 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { api, getToken } from '../_helpers/api'
 const InvoiceContext = createContext(null)
 
+const TAX_RATES = { Tax0: 0, Tax7: 0.07, Tax19: 0.19 }
+
+function calcArticleGross(article) {
+  const rate = TAX_RATES[article.taxType] ?? 0
+  return article.priceNet * (1 + rate)
+}
+
+function calcArticleTax(article) {
+  const rate = TAX_RATES[article.taxType] ?? 0
+  return article.priceNet * rate
+}
+
 function mapBackendInvoice(inv) {
   const articles = (inv.articles || []).map(a => ({
     articleNumber: a.articleNumber,
@@ -11,8 +23,12 @@ function mapBackendInvoice(inv) {
     taxType: a.tax,
     unitType: a.unit,
     quantity: a.quantity,
+    gross: calcArticleGross(a),
+    tax: calcArticleTax(a),
   }))
   const totalNet = articles.reduce((sum, a) => sum + (a.priceNet * a.quantity), 0)
+  const totalGross = articles.reduce((sum, a) => sum + (calcArticleGross(a) * a.quantity), 0)
+  const totalTax = articles.reduce((sum, a) => sum + (calcArticleTax(a) * a.quantity), 0)
   return {
     id: inv.id,
     number: inv.number,
@@ -20,6 +36,8 @@ function mapBackendInvoice(inv) {
     supplier: inv.supplier?.name || inv.supplier,
     articles,
     totalNet,
+    totalGross,
+    totalTax,
     payed: inv.payed,
   }
 }

@@ -1,5 +1,6 @@
 package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "articles")
@@ -58,7 +59,8 @@ public class Article {
 	public String getArticleNumber() {
 		return articleNumber;
 	}
-
+	
+	@JsonIgnore
 	public Invoice getInvoice() {
 		return invoice;
 	}

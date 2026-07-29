@@ -35,3 +35,9 @@ out/
 
 ## Obsidian
 .obsidian/
+
+## macOS
+.DS_Store
+
+## opencode
+.opencode/

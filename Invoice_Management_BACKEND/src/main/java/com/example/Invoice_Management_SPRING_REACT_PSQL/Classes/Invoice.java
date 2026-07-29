@@ -59,7 +59,7 @@ public class Invoice {
 	public String getNumber() {
 		return number;
 	}
-
+	
 	public Supplier getSupplier() {
 		return supplier;
 	}

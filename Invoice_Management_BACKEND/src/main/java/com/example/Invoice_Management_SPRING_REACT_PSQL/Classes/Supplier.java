@@ -2,6 +2,7 @@ package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "suppliers")
@@ -27,7 +28,7 @@ public class Supplier {
 	public Supplier(String name) {
 		this.name = name;
 	}
-
+	@JsonIgnore
 	public List<Article> getArticles() {
 		return articles;
 	}
@@ -35,7 +36,8 @@ public class Supplier {
 	public int getId() {
 		return id;
 	}
-
+	
+	@JsonIgnore
 	public List<Invoice> getInvoices() {
 		return invoices;
 	}

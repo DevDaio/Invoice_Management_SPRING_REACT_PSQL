@@ -103,7 +103,7 @@ public class PostController {
         }
 
         return ResponseEntity.ok(                                          // HTTP 200: Erfolg
-                Map.of("token", jwtService.generateToken(user.getMail()))  // Gibt JSON zurück: {"token": "eyJhbGciOiJIUzI1NiJ9..."}
+                Map.of("token", jwtService.generateToken(user.getMail(), user.getRole()))  // Gibt JSON zurück: {"token": "eyJhbGciOiJIUzI1NiJ9..."}
         );
     }
 

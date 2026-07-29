@@ -1,8 +1,10 @@
 import { useAuth } from '../_context/AuthContext'
+import { useModal } from '../_context/ModalContext'
 
 export default function Navbar() {
 
-  const { isLoggedIn, logout } = useAuth()
+  const { isLoggedIn, user, logout } = useAuth()
+  const { openSettings } = useModal()
 
   return (
     <nav className="navbar navbar-expand navbar-dark bg-dark px-3">
@@ -10,7 +12,9 @@ export default function Navbar() {
 
       {isLoggedIn && (
         <ul className="navbar-nav ms-auto">
-          <li className="nav-item"><a className="nav-link" href="#">Account</a></li>
+          {user?.role === 'ADMIN' && (
+            <li className="nav-item"><button className="btn btn-link nav-link" onClick={openSettings}>Account</button></li>
+          )}
           <li className="nav-item"><button className="btn btn-outline-light btn-sm ms-2" onClick={logout}>Logout</button></li>
         </ul>
       )}

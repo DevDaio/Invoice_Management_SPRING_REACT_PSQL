@@ -14,6 +14,9 @@ import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.Supplier;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.DB_Repository.ArticleRepository;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.DB_Repository.SupplierRepository;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.DB_Repository.InvoiceRepository;
+import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.Crypting;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/update")
@@ -76,6 +79,34 @@ public class PutController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         user.setPassword(request.getPassword());
+        userRepository.save(user);
+        return ResponseEntity.ok().body("Password updated successfully");
+    }
+
+    public static class OwnPasswordRequest {
+        private String currentPassword;
+        private String newPassword;
+
+        public String getCurrentPassword() { return currentPassword; }
+        public void setCurrentPassword(String currentPassword) { this.currentPassword = currentPassword; }
+        public String getNewPassword() { return newPassword; }
+        public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    }
+
+    @PutMapping("/own-password")
+    public ResponseEntity<?> updateOwnPassword(@RequestBody OwnPasswordRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        }
+        User user = (User) auth.getPrincipal();
+        if (!Crypting.checkPassword(user, request.getCurrentPassword())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Current password is incorrect");
+        }
+        if (request.getNewPassword() == null || request.getNewPassword().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New password is required");
+        }
+        user.setPassword(request.getNewPassword());
         userRepository.save(user);
         return ResponseEntity.ok().body("Password updated successfully");
     }

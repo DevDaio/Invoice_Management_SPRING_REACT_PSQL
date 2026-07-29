@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const TAX_RATES = { Tax0: 0, Tax7: 0.07, Tax19: 0.19 }
+
 const TAX_OPTIONS = [
   { value: 'Tax0', label: '0%' },
   { value: 'Tax7', label: '7%' },
@@ -41,10 +43,30 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
     if (articles.length > 1) setArticles(prev => prev.filter((_, i) => i !== index))
   }
 
+  const articleGross = (a) => {
+    const price = parseFloat(a.priceNet) || 0
+    return price * (1 + (TAX_RATES[a.taxType] ?? 0))
+  }
+
+  const articleTax = (a) => {
+    const price = parseFloat(a.priceNet) || 0
+    return price * (TAX_RATES[a.taxType] ?? 0)
+  }
+
   const calcTotalNet = () => articles.reduce((sum, a) => {
     const price = parseFloat(a.priceNet) || 0
     const qty = parseInt(a.quantity) || 0
     return sum + price * qty
+  }, 0)
+
+  const calcTotalGross = () => articles.reduce((sum, a) => {
+    const qty = parseInt(a.quantity) || 0
+    return sum + articleGross(a) * qty
+  }, 0)
+
+  const calcTotalTax = () => articles.reduce((sum, a) => {
+    const qty = parseInt(a.quantity) || 0
+    return sum + articleTax(a) * qty
   }, 0)
 
   const handleSave = () => {
@@ -97,7 +119,8 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
                 <th>Article No.</th>
                 <th>Name</th>
                 <th>Net €</th>
-                <th>Tax</th>
+                <th>Tax %</th>
+                <th>Gross €</th>
                 <th>Unit</th>
                 <th>Qty</th>
                 <th></th>
@@ -128,6 +151,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
                       {TAX_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
                   </td>
+                  <td className="text-end">{articleGross(article).toFixed(2)} €</td>
                   <td>
                     <select className="form-select form-select-sm" value={article.unitType}
                             onChange={e => updateArticle(i, 'unitType', e.target.value)}>
@@ -151,7 +175,11 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
         </div>
 
         <div className="text-end mb-3">
-          <strong>Net total: {calcTotalNet().toFixed(2)} €</strong>
+          <strong>Net: {calcTotalNet().toFixed(2)} €</strong>
+          &nbsp;|&nbsp;
+          <strong>Tax: {calcTotalTax().toFixed(2)} €</strong>
+          &nbsp;|&nbsp;
+          <strong>Gross: {calcTotalGross().toFixed(2)} €</strong>
         </div>
 
         <div className="d-flex justify-content-end gap-2">
