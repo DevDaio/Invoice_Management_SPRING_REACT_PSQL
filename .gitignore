@@ -39,5 +39,17 @@ out/
 ## macOS
 .DS_Store
 
+## Terraform
+Terraform/.terraform/
+*.tfstate
+*.tfstate.*
+
+## SSH Keys
+.AWS_KP/
+
+## Deploy artifacts
+*.tar
+*.env
+
 ## opencode
 .opencode/
