@@ -29,5 +29,9 @@ export async function api(endpoint, options = {}) {
   if (response.status === 204) {
     return null;
   }
-  return response.json();
+  try {
+    return await response.json();
+  } catch {
+    return await response.text();
+  }
 }

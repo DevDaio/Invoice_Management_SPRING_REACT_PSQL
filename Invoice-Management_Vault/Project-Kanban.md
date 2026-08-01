@@ -12,9 +12,8 @@ kanban-plugin: board
 
 ## In Progress
 
-- [ ] CI/CD Pipeline: deploy-backend.yml Testlauf (Docker-Fix, EC2 neu bauen) @date{01-08-26}
-- [ ] CI/CD Pipeline: deploy-frontend.yml manuell triggern (keine FE-Änderung im letzten Push) @date{01-08-26}
-- [ ] App End-to-End prüfen (http://<neue-ip>:8080 + S3-URL) @date{01-08-26}
+- [ ] HTTPS: eigene Domain + Caddy Reverse Proxy (Backend 8080 + S3-Frontend) ab morgen @date{02-08-26}
+- [ ] Frontend: visuelle Designfragen überarbeiten (Look & Feel) ab morgen @date{02-08-26}
 - [ ] Frontend: Login-Token in localStorage + Auth-Header + geschützte Routen
 - [ ] Frontend: Router und API Routes anlegen
 - [ ] Frontend: Navbar anpassen (Links funktionsfähig)
@@ -22,6 +21,11 @@ kanban-plugin: board
 
 ## Done
 
+- [x] CORS-Fix: erlaubte Origins per APP_CORS_ORIGINS env-variable (SecurityConfig + compose + WF) @date{01-08-26}
+- [x] Frontend: JSON.parse-Bug bei String-Antworten gefixt (api.js try/catch → text) @date{01-08-26}
+- [x] App End-to-End: Backend antwortet (Login + geschützte Routen), CORS-Preflight 200 @date{01-08-26}
+- [x] CI/CD Pipeline: deploy-backend.yml Testlauf (Docker-Fix, EC2 neu bauen) @date{01-08-26}
+- [x] CI/CD Pipeline: deploy-frontend.yml manuell triggern (keine FE-Änderung im letzten Push) @date{01-08-26}
 - [x] GHA tf_aws.yml: erster Lauf erfolgreich (Infra: EC2 + S3) @date{01-08-26}
 - [x] AWS-Secrets-Bug: STS-Keys (ASIA) vs IAM-Keys (AKIA) per Debug-WF identifiziert + gefixt @date{01-08-26}
 - [x] Debug-WF (debug-secrets.yml) erstellt, Diagnose gemacht, wieder entfernt @date{01-08-26}
@@ -79,7 +83,6 @@ kanban-plugin: board
 ## Future Backlog (Konzeptideen und kommende Features)
 
 - [ ] Dashboard mit Auswertungen/Statistiken
-- [ ] Hosting + Caddy Reverse Proxy (HTTPS)
 - [ ] Objektspeicher: Rechnungen als PDF/XML ablegen (S3/MinIO)
 - [ ] PDF-Viewer: Rechnung in der WebApp als PDF anzeigen
 - [ ] PDF2XML-Reader: Digitale Rechnungen parsen + Felder automatisch befüllen
