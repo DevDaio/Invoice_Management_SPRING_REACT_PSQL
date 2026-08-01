@@ -7,7 +7,7 @@ variable "instance_type" {
 variable "frontend_bucket_name" {
   description = "S3 bucket name for frontend static hosting"
   type        = string
-  default     = "invoice-mgmt-frontend-timo"
+  default     = "invoice-mgmt-frontend"
 }
 
 variable "ssh_allowed_cidr" {

@@ -64,7 +64,7 @@ resource "aws_instance" "app_server" {
   user_data = <<-EOF
     #!/bin/bash
     apt-get update
-    apt-get install -y docker.io
+    apt-get install -y docker.io docker-compose-plugin
     systemctl enable docker
     systemctl start docker
     usermod -aG docker ubuntu
