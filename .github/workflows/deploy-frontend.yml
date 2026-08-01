@@ -1,0 +1,59 @@
+name: "AWS Deploy Frontend"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Invoice_Management_FRONTEND/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: "Deploy Frontend"
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: aws-login
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Terraform Init + Get EC2 IP
+        id: get_ip
+        working-directory: Terraform
+        run: |
+          terraform init -input=false
+          echo "ec2_ip=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Invoice_Management_FRONTEND/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: Invoice_Management_FRONTEND
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: Invoice_Management_FRONTEND
+        env:
+          VITE_BASE_URL: http://${{ steps.get_ip.outputs.ec2_ip }}:8080
+        run: npm run build
+
+      - name: Sync to S3
+        run: aws s3 sync Invoice_Management_FRONTEND/dist/ s3://invoice-mgmt-frontend/ --delete

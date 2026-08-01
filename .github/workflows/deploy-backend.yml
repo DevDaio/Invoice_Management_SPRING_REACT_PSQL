@@ -1,0 +1,81 @@
+name: "AWS Deploy Backend"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Invoice_Management_BACKEND/**'
+      - 'docker-compose.ec2.yml'
+      - 'Invoice_Management_DB/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: "Deploy Backend"
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: aws-login
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Terraform Init + Get EC2 IP
+        id: get_ip
+        working-directory: Terraform
+        run: |
+          terraform init -input=false
+          echo "ec2_ip=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Gradle Build
+        working-directory: Invoice_Management_BACKEND
+        run: |
+          chmod +x gradlew
+          ./gradlew build -x test
+
+      - name: Build Docker Image
+        working-directory: Invoice_Management_BACKEND
+        run: |
+          docker build -t invoice-backend:latest .
+          docker save invoice-backend:latest -o backend.tar
+
+      - name: Prepare SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan "${{ steps.get_ip.outputs.ec2_ip }}" >> ~/.ssh/known_hosts
+
+      - name: SCP Files to EC2
+        run: |
+          scp Invoice_Management_BACKEND/backend.tar ubuntu@${{ steps.get_ip.outputs.ec2_ip }}:/home/ubuntu/
+          scp docker-compose.ec2.yml ubuntu@${{ steps.get_ip.outputs.ec2_ip }}:/home/ubuntu/docker-compose.yml
+          ssh ubuntu@${{ steps.get_ip.outputs.ec2_ip }} "mkdir -p /home/ubuntu/Invoice_Management_DB"
+          scp Invoice_Management_DB/CreateTables.sql ubuntu@${{ steps.get_ip.outputs.ec2_ip }}:/home/ubuntu/Invoice_Management_DB/CreateTables.sql
+
+      - name: Deploy on EC2
+        run: |
+          ssh ubuntu@${{ steps.get_ip.outputs.ec2_ip }} "
+            echo 'APP_JWT_SECRET=${{ secrets.APP_JWT_SECRET }}' > /home/ubuntu/.env &&
+            docker load < /home/ubuntu/backend.tar &&
+            cd /home/ubuntu && docker compose up -d
+          "

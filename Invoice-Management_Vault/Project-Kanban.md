@@ -6,13 +6,14 @@ kanban-plugin: board
 
 ## Backlog (Referenzprojekt-Prio)
 
-- [ ] CI/CD Pipeline (GitHub Actions)
 - [ ] Unit-Tests schreiben (Controller, Service, Security)
 - [ ] PUT /invoice (payed status setzen)
 
 
 ## In Progress
 
+- [ ] CI/CD Pipeline (GitHub Actions): deploy.yml (Backend + Frontend-Jobs)
+- [ ] CI/CD Pipeline (GitHub Actions): tf_aws.yml fertig, erster Testlauf ausstehend
 - [ ] Frontend: Login-Token in localStorage + Auth-Header + geschützte Routen
 - [ ] Frontend: Router und API Routes anlegen
 - [ ] Frontend: Navbar anpassen (Links funktionsfähig)
@@ -20,6 +21,11 @@ kanban-plugin: board
 
 ## Done
 
+- [x] Backend-Dockerfile (Multi-Stage: gradle build → JRE runtime) @date{31-07-26}
+- [x] Terraform: apply + destroy getestet, State im S3-Bucket @date{31-07-26}
+- [x] Terraform user_data: docker-compose-plugin ergänzt @date{31-07-26}
+- [x] GHA tf_aws.yml: Terraform-Job + EC2-IP-Output @date{31-07-26}
+- [x] Build-Verständnis: Gradle/jar/fat-jar/JDK-vs-JRE @date{31-07-26}
 - [x] SecurityConfig fertig (CORS, CSRF, STATELESS, Routen, PasswordEncoder) @date{27-07-26}
 - [x] PostController.login() gibt JWT-Token zurück (statt User-Objekt) @date{27-07-26}
 - [x] Rollen-System ADMIN/USER (getRole(), SimpleGrantedAuthority, DB-Uppercase) @date{27-07-26}
