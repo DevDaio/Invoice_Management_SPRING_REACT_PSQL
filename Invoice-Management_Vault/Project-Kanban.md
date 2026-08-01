@@ -12,8 +12,9 @@ kanban-plugin: board
 
 ## In Progress
 
-- [ ] CI/CD Pipeline (GitHub Actions): deploy.yml (Backend + Frontend-Jobs)
-- [ ] CI/CD Pipeline (GitHub Actions): tf_aws.yml fertig, erster Testlauf ausstehend
+- [ ] CI/CD Pipeline: deploy-backend.yml Testlauf (Docker-Fix, EC2 neu bauen) @date{01-08-26}
+- [ ] CI/CD Pipeline: deploy-frontend.yml manuell triggern (keine FE-Änderung im letzten Push) @date{01-08-26}
+- [ ] App End-to-End prüfen (http://<neue-ip>:8080 + S3-URL) @date{01-08-26}
 - [ ] Frontend: Login-Token in localStorage + Auth-Header + geschützte Routen
 - [ ] Frontend: Router und API Routes anlegen
 - [ ] Frontend: Navbar anpassen (Links funktionsfähig)
@@ -21,6 +22,13 @@ kanban-plugin: board
 
 ## Done
 
+- [x] GHA tf_aws.yml: erster Lauf erfolgreich (Infra: EC2 + S3) @date{01-08-26}
+- [x] AWS-Secrets-Bug: STS-Keys (ASIA) vs IAM-Keys (AKIA) per Debug-WF identifiziert + gefixt @date{01-08-26}
+- [x] Debug-WF (debug-secrets.yml) erstellt, Diagnose gemacht, wieder entfernt @date{01-08-26}
+- [x] Docker-Bug gefunden: docker-compose-plugin existiert nicht → Fix docker-compose-v2 @date{01-08-26}
+- [x] terraform destroy ausgeführt (Budget-Stopp, heute Abend neu aufbauen) @date{01-08-26}
+- [x] GHA deploy-backend.yml + deploy-frontend.yml erstellt + YAML-validiert @date{01-08-26}
+- [x] Lerneinheit: SSH-Key-Paare, npm ci, env-Block vs .env, s3 sync --delete @date{01-08-26}
 - [x] Backend-Dockerfile (Multi-Stage: gradle build → JRE runtime) @date{31-07-26}
 - [x] Terraform: apply + destroy getestet, State im S3-Bucket @date{31-07-26}
 - [x] Terraform user_data: docker-compose-plugin ergänzt @date{31-07-26}
