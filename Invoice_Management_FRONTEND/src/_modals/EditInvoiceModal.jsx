@@ -23,6 +23,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
   const [number, setNumber] = useState(invoice?.number || '')
   const [date, setDate] = useState(invoice?.date || '')
   const [supplier, setSupplier] = useState(invoice?.supplier || '')
+  const [payed, setPayed] = useState(invoice?.payed || false)
   const [articles, setArticles] = useState(
     invoice?.articles || [{ articleNumber: '', name: '', priceNet: '', taxType: 'Tax19', unitType: 'Pieces', quantity: '1' }]
   )
@@ -72,7 +73,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
 
   const handleSave = () => {
     const totalNet = calcTotalNet()
-    onSave(invoice.id, { number, date, supplier, articles, totalNet })
+    onSave(invoice.id, { number, date, supplier, articles, totalNet, payed })
   }
 
 	if (!show || !invoice)
@@ -108,7 +109,15 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
         </div>
 
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <span className="fw-bold">Articles</span>
+          <div className="form-check form-switch mb-0">
+            <input className="form-check-input" type="checkbox" id="editPaidCheck"
+                   checked={payed} onChange={e => setPayed(e.target.checked)} />
+            <label className="form-check-label" htmlFor="editPaidCheck">
+              <span className={`badge ${payed ? 'badge-paid' : 'badge-open'}`}>
+                {payed ? 'Paid' : 'Open'}
+              </span>
+            </label>
+          </div>
           <button className="btn btn-sm btn-outline-success" onClick={addArticle}>+ Add Article</button>
         </div>
 

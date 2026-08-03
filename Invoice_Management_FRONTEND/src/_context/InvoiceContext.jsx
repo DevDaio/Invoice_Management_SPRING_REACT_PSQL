@@ -81,6 +81,7 @@ export function InvoiceProvider({ children }) {
       number: data.number,
       date: data.date,
       supplierName: data.supplier,
+      payed: data.payed,
       articles: data.articles.map(a => ({
         articleNumber: a.articleNumber,
         name: a.name,
