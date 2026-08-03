@@ -8,4 +8,14 @@ output "frontend_bucket_url" {
   value       = aws_s3_bucket_website_configuration.frontend.website_endpoint
 }
 
+output "frontend_cdn_url" {
+  description = "CloudFront URL for the frontend (https)"
+  value       = "https://${aws_cloudfront_distribution.frontend.domain_name}"
+}
+
+output "backend_cdn_url" {
+  description = "CloudFront URL for the backend API (https)"
+  value       = "https://${aws_cloudfront_distribution.backend.domain_name}"
+}
+
 

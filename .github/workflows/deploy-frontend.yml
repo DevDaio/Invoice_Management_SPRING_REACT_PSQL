@@ -37,6 +37,7 @@ jobs:
         run: |
           terraform init -input=false
           echo "ec2_ip=$(terraform output -raw ec2_public_ip)" >> "$GITHUB_OUTPUT"
+          echo "backend_cdn=$(terraform output -raw backend_cdn_url)" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -52,7 +53,7 @@ jobs:
       - name: Build Frontend
         working-directory: Invoice_Management_FRONTEND
         env:
-          VITE_BASE_URL: http://${{ steps.get_ip.outputs.ec2_ip }}:8080
+          VITE_BASE_URL: ${{ steps.get_ip.outputs.backend_cdn }}
         run: npm run build
 
       - name: Sync to S3
