@@ -37,6 +37,10 @@ export default function AddInvoiceModal({ show, onClose, onSave }) {
 
   useEffect(() => {
     if (show) {
+      setNumber('')
+      setDate('')
+      setSupplier('')
+      setArticles([{ ...emptyArticle }])
       api('/suppliers').then(data => setSuppliers(data.map(s => s.name))).catch(() => {})
     }
   }, [show])
