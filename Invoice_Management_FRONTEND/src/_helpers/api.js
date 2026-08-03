@@ -23,15 +23,19 @@ export async function api(endpoint, options = {}) {
     options.body = JSON.stringify(options.body);
   }
   const response = await fetch(`${BASE_URL}${endpoint}`, { ...options, headers });
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
   if (response.status === 204) {
     return null;
   }
+  const text = await response.text();
+  if (!response.ok) {
+    throw new Error(text);
+  }
+  if (!text) {
+    return null;
+  }
   try {
-    return await response.json();
+    return JSON.parse(text);
   } catch {
-    return await response.text();
+    return text;
   }
 }
