@@ -2,52 +2,89 @@
 
 ## Über das Projekt
 
-Dieses Projekt entstand aus dem Wunsch, **Java und Spring Boot nicht nur theoretisch zu lernen, sondern in einem praktischen, überschaubaren Anwendungsfall zu verinnerlichen**. Die Idee: Eine Rechnungsverwaltung – simpel im Kern, aber mit typischen Enterprise-Komponenten (Datenbankanbindung, Sicherheit, Web-Frontend, CI/CD).
+Eine webbasierte Rechnungsverwaltung, gebaut mit **Java & Spring Boot** als Kern. Das Projekt ist mein praktischer Weg, Java nicht nur theoretisch zu lernen, sondern in einem realen Anwendungsfall mit typischen Enterprise-Komponenten umzusetzen: Datenbankanbindung, Sicherheit, REST-API, Web-Frontend und eine vollständige CI/CD-Deployment-Pipeline auf AWS.
 
-Es ist ein Lernprojekt, ein Werkzeug und ein Portfolio-Stück zugleich.
+## Backend im Fokus (Java & Spring Boot)
 
-## Kanban
-Projektmanagement mittels Kanban
-[Link zum Kanban-Board](./Invoice-Management_Vault/Project-Kanban.md)
+Der Schwerpunkt liegt auf dem Java-Backend:
 
-## Warum Java?
+- **JPA-Modellierung** – Entities (`Invoice`, `Article`, `Supplier`, `User`) mit `@Entity`, `@Table`, `@OneToMany`/`@ManyToOne`-Beziehungen
+- **Spring Data JPA** – Repositories mit CRUD ohne Boilerplate
+- **REST-API** – Controller für `GET`, `POST`, `PUT`, `DELETE` (User, Invoices, Articles, Suppliers)
+- **Spring Security mit JWT** – Token-basierte Authentifizierung (JJWT), rollenbasierter Zugriff (Admin/User)
+- **Passwort-Sicherheit** – BCrypt-Hashing, Passwort-Änderung mit Current-Password-Prüfung
+- **CORS-Konfiguration** – konfigurierbar über Environment-Variablen für den Cloudfront-Deploy
 
-Java verbindet auf seltene Weise **low-level'sche Genauigkeit mit high-level'scher Ausdrucksstärke**. Wer Java beherrscht, hat nicht nur eine Sprache gelernt, sondern ein Ökosystem verstanden – von Speicherverwaltung und Typsicherheit bis hin zu Architekturmustern und Transaktionalität. In der Enterprise-Welt ist Java seit Jahrzehnten eine der beständigsten Größen, und Spring Boot ist der de facto Standard für moderne Java-Webentwicklung.
+## Deployment & Infrastruktur
 
-Dieses Projekt ist der Versuch, diese Tiefe nicht nur zu lesen, sondern zu programmieren.
 
-## Entwicklungsphilosophie
+- **CI/CD** – GitHub Actions: Terraform-Workflow + getrennte Deploy-Workflows für Backend und Frontend
+- **Terraform** – Infrastruktur als Code: EC2, S3, Security Groups, CloudFront
+- **Docker** – Multi-Stage-Dockerfile für das Backend, Docker Compose auf dem Server
+- **HTTPS** – zwei CloudFront-Distributionen (Frontend statisch, Backend als API-Origin)
+- **AWS** – EC2 (Backend + PostgreSQL), S3 (Frontend), CloudFront (CDN + Zertifikate)
 
-Ich entwickle dieses Projekt allein. Mir war wichtig, dass am Ende keine Zeile Code im Projekt liegt, die ich nicht verstehe.
+## Frontend
 
-Deshalb arbeite ich nicht mit fertig generierten Lösungen, sondern Schritt für Schritt: Ich bespreche mit einem KI-Assistenten (OpenCode) Konzepte und Alternativen, schreibe den Code dann aber selbst. Der Assistent erklärt, fragt nach und gibt Hinweise – das Programmieren bleibt meine Arbeit.
+React (Vite) als dünne Schicht über der REST-API: Login, Rechnungs-CRUD in Modals, Context-API für State, JWT-Handling im Frontend.
 
-Das ist langsamer als Code zu generieren, aber ich lerne dabei.
+## Architektur & Infrastruktur
 
-## Vault
+```
+Browser
+   │  https
+   ▼
+CloudFront Frontend  ──http──▶  S3-Website (Invoice-Management_FRONTEND/dist)
+   ▼
+CloudFront Backend   ──http──▶  EC2 :8080 (Spring Boot, Docker)
+                                  │
+                                  ▼  JDBC
+                            PostgreSQL 16 (Docker, Port 5432)
+```
 
-Der Ordner `Invoice-Management_Vault/` ist eine **kreative und visuelle Spielwiese** – kein starres Pflichtenheft. 
-Hier finden sich Skizzen (draw.io, Excalidraw), Ideensammlungen und Gedanken zur Architektur. Der Vault lebt mit dem Projekt und darf jederzeit umgeworfen werden.
+Die Infrastruktur ist komplett als Code abgebildet und wird automatisch deployed:
+
+| Komponente | Implementierung | Zweck |
+|---|---|---|
+| **Terraform-Workflow** | `.github/workflows/tf_aws.yml` | Baut die gesamte AWS-Infrastruktur bei `Terraform/**`-Änderungen |
+| **Backend-Deploy** | `.github/workflows/deploy-backend.yml` | Gradle-Build → Docker-Image → per SCP auf EC2 → `docker compose up` |
+| **Frontend-Deploy** | `.github/workflows/deploy-frontend.yml` | `npm ci` + Build → `aws s3 sync` auf den Frontend-Bucket |
+| **Infrastruktur** | `Terraform/main.tf` | EC2, Security Group, S3, zwei CloudFront-Distributionen |
+| **Backend-Image** | `Invoice_Management_BACKEND/Dockerfile` | Multi-Stage-Build (Gradle → JRE-Runtime) |
+| **Server-Setup** | `docker-compose.ec2.yml` | Spring Boot + PostgreSQL als Services |
+| **DB-Schema** | `Invoice_Management_DB/CreateTables.sql` | 4 Tabellen (`users`, `suppliers`, `invoices`, `articles`) mit FK |
+
+### HTTPS
+
+Zwei CloudFront-Distributionen liefern Frontend und Backend getrennt aus – je mit kostenlosem AWS-Zertifikat und http→https-Weiterleitung. Das Backend-CDN reicht `Authorization`- und `Origin`-Header durch (JWT + CORS) und cacht nicht (`ttl = 0`), damit API-Antworten immer aktuell sind.
+
+### Herausforderungen, die ich dabei gelöst habe
+
+- **S3-Website-Origin**: CloudFront braucht für Website-Endpoints einen expliziten Custom-Origin-Block, sonst lehnt AWS die Distribution ab
+- **Kein API-Caching**: Ohne `default_ttl = 0` würden CloudFront-Edge-Knoten veraltete Rechnungsdaten ausliefern
+- **CORS + JWT durch das CDN**: `Origin`- und `Authorization`-Header müssen explizit weitergeleitet werden
+- **Docker auf EC2**: Ubuntu-24.04-Paket heißt `docker-compose-v2`, nicht `docker-compose-plugin`
+
+## Datenbank
+
+PostgreSQL 16 läuft aktuell als Docker-Container auf der EC2-Instanz. Ein Umzug auf **Amazon RDS** (gemanagte DB mit Backups, Snapshots und Failover) ist technisch vorbereitet, wird aber aus Kostengründen zurückgestellt – der aktuelle Setup erfüllt den Zweck für ein Lern-/Portfolio-Projekt vollständig.
 
 ## Tech-Stack
 
 | Ebene | Technologie |
 |-------|------------|
-| Frontend | React (Vite), HTML, CSS |
-| Backend | Spring Boot 3, Spring MVC, Spring Data JPA |
-| Sicherheit | Spring Security |
+| Backend | Java, Spring Boot 3, Spring MVC, Spring Data JPA |
+| Sicherheit | Spring Security, JWT (JJWT), BCrypt |
 | Datenbank | PostgreSQL |
+| Frontend | React (Vite), HTML, CSS |
 | Build-Tool | Gradle |
-| Container | Docker |
+| Container | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
-| Infrastruktur | Terraform (geplant) |
+| Infrastruktur | Terraform, AWS (EC2, S3, CloudFront) |
 
----
+## Projektmanagement
 
-Meine OpenCode-Skills (u. a. **stepwise** für dieses Projekt): 
-[DevDaio/OpenCodeSkills](https://github.com/DevDaio/OpenCodeSkills)
-
+- [Kanban-Board](./Invoice-Management_Vault/Project-Kanban.md)
 ---
 
 *Juli 2026*
-# Invoice_Management_SPRING_REACT_PSQL

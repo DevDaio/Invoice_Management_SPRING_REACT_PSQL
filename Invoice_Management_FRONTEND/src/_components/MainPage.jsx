@@ -26,12 +26,45 @@ export default function MainPage() {
     closeModal()
   }
 
+  const totalInvoices = invoices.length
+  const totalGross = invoices.reduce((sum, inv) => sum + inv.totalGross, 0)
+  const openGross = invoices.filter(inv => !inv.payed).reduce((sum, inv) => sum + inv.totalGross, 0)
+  const paidGross = invoices.filter(inv => inv.payed).reduce((sum, inv) => sum + inv.totalGross, 0)
+
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>Invoices</h3>
+    <div className="container-fluid py-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h3 className="mb-0">Invoices</h3>
         <button className="btn btn-success" onClick={() => openModal('add')}>+ New Invoice</button>
       </div>
+
+      <div className="row g-3 mb-4">
+        <div className="col-sm-6 col-lg-3">
+          <div className="kpi-card">
+            <div className="kpi-label">Invoices</div>
+            <div className="kpi-value">{totalInvoices}</div>
+          </div>
+        </div>
+        <div className="col-sm-6 col-lg-3">
+          <div className="kpi-card">
+            <div className="kpi-label">Open</div>
+            <div className="kpi-value text-warning">{openGross.toFixed(2)} €</div>
+          </div>
+        </div>
+        <div className="col-sm-6 col-lg-3">
+          <div className="kpi-card">
+            <div className="kpi-label">Paid</div>
+            <div className="kpi-value text-success">{paidGross.toFixed(2)} €</div>
+          </div>
+        </div>
+        <div className="col-sm-6 col-lg-3">
+          <div className="kpi-card">
+            <div className="kpi-label">Total Gross</div>
+            <div className="kpi-value">{totalGross.toFixed(2)} €</div>
+          </div>
+        </div>
+      </div>
+
       {invoices.length === 0 ? ( <p>No invoices yet.</p>) : 
       (<table className="table table-striped">
           <thead className="table-dark">
@@ -39,6 +72,7 @@ export default function MainPage() {
               <th>Number</th>
               <th>Date</th>
               <th>Supplier</th>
+              <th>Status</th>
               <th>Net</th>
               <th>Tax</th>
               <th>Gross</th>
@@ -51,6 +85,11 @@ export default function MainPage() {
                 <td>{inv.number}</td>
                 <td>{inv.date}</td>
                 <td>{inv.supplier}</td>
+                <td>
+                  <span className={`badge ${inv.payed ? 'badge-paid' : 'badge-open'}`}>
+                    {inv.payed ? 'Paid' : 'Open'}
+                  </span>
+                </td>
                 <td>{inv.totalNet.toFixed(2)} €</td>
                 <td>{inv.totalTax.toFixed(2)} €</td>
                 <td>{inv.totalGross.toFixed(2)} €</td>

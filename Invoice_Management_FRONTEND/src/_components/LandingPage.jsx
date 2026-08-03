@@ -10,7 +10,7 @@ export default function LandingPage() {
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
-        <div className="col-md-4">
+        <div className="col-md-4 col-lg-3">
           <div className="card">
             <div className="card-body">
               <h4 className="card-title text-center mb-4">Login</h4>

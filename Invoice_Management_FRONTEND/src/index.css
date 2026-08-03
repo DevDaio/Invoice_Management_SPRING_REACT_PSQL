@@ -1,4 +1,51 @@
+:root {
+  --sidebar-bg: #212529;
+  --sidebar-width: 240px;
+  --accent: #198754;
+  --status-paid: #198754;
+  --status-open: #ffc107;
+}
+
+[data-bs-theme="light"] {
+  --sidebar-bg: #212529;
+}
+
+[data-bs-theme="dark"] {
+  --sidebar-bg: #16181d;
+}
+
 body {
   margin: 0;
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+.badge-paid {
+  background-color: var(--status-paid);
+  color: #fff;
+}
+
+.badge-open {
+  background-color: var(--status-open);
+  color: #212529;
+}
+
+.kpi-card {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--bs-body-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.kpi-card .kpi-value {
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.kpi-card .kpi-label {
+  color: var(--bs-secondary-color);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
