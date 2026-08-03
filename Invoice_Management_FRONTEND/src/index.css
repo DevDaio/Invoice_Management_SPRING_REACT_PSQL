@@ -1,22 +1,23 @@
 :root {
-  --sidebar-bg: #212529;
+  --sidebar-bg: #16181d;
   --sidebar-width: 240px;
   --accent: #198754;
   --status-paid: #198754;
   --status-open: #ffc107;
 }
 
-[data-bs-theme="light"] {
-  --sidebar-bg: #212529;
+body {
+  margin: 0;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  background-color: #121417;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 [data-bs-theme="dark"] {
   --sidebar-bg: #16181d;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
 }
 
 .badge-paid {

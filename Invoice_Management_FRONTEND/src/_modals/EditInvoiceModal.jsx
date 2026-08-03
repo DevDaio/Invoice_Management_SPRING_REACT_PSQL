@@ -84,7 +84,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       backgroundColor: 'rgba(0,0,0,0.5)'
     }} onClick={onClose}>
-      <div className="bg-white rounded shadow p-4" style={{ width: '1100px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+      <div className="bg-body rounded shadow p-4" style={{ width: '1100px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
         <h4 className="mb-3">Edit Invoice</h4>
 
         <div className="row mb-3">

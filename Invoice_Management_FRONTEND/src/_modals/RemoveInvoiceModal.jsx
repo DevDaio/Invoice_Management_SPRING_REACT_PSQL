@@ -8,7 +8,7 @@ export default function RemoveInvoiceModal({ show, onClose, onConfirm, invoice }
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       backgroundColor: 'rgba(0,0,0,0.5)'
     }} onClick={onClose}>
-      <div className="bg-white rounded shadow p-4" style={{ width: '380px' }} onClick={e => e.stopPropagation()}>
+      <div className="bg-body rounded shadow p-4" style={{ width: '380px' }} onClick={e => e.stopPropagation()}>
         <h4 className="mb-3">Delete Invoice</h4>
         <p>Are you sure you want to delete invoice <strong>{invoice.number}</strong>?</p>
         <p className="text-muted small">This action cannot be undone.</p>
