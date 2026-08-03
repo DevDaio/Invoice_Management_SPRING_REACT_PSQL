@@ -1,4 +1,16 @@
+import { useEffect } from 'react'
+
 export default function RemoveInvoiceModal({ show, onClose, onConfirm, invoice }) {
+
+  useEffect(() => {
+    if (!show) return
+    const handleKey = (e) => {
+      if (e.key === 'Enter') onConfirm(invoice.id)
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [show, invoice, onConfirm, onClose])
 
   if (!show || !invoice)
     return null

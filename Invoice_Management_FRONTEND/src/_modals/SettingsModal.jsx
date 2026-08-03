@@ -58,40 +58,46 @@ export default function SettingsModal({ show, onClose }) {
 
         <div className="mb-4">
           <h5>Create User</h5>
-          <input className="form-control form-control-sm mb-2" type="email" placeholder="Email"
-                 value={newMail} onChange={e => setNewMail(e.target.value)} />
-          <input className="form-control form-control-sm mb-2" type="password" placeholder="Password"
-                 value={newPass} onChange={e => setNewPass(e.target.value)} />
-          <select className="form-select form-select-sm mb-2" value={newRole} onChange={e => setNewRole(e.target.value)}>
-            <option value="USER">USER</option>
-            <option value="ADMIN">ADMIN</option>
-          </select>
-          <button className="btn btn-sm btn-primary" onClick={handleCreateUser}>Create</button>
-          {createMsg && <p className="mt-1 mb-0 small text-muted">{createMsg}</p>}
+          <form onSubmit={e => { e.preventDefault(); handleCreateUser() }}>
+            <input className="form-control form-control-sm mb-2" type="email" placeholder="Email"
+                   value={newMail} onChange={e => setNewMail(e.target.value)} />
+            <input className="form-control form-control-sm mb-2" type="password" placeholder="Password"
+                   value={newPass} onChange={e => setNewPass(e.target.value)} />
+            <select className="form-select form-select-sm mb-2" value={newRole} onChange={e => setNewRole(e.target.value)}>
+              <option value="USER">USER</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+            <button className="btn btn-sm btn-primary" type="submit">Create</button>
+            {createMsg && <p className="mt-1 mb-0 small text-muted">{createMsg}</p>}
+          </form>
         </div>
 
         <hr />
 
         <div className="mb-4">
           <h5>Change My Password</h5>
-          <input className="form-control form-control-sm mb-2" type="password" placeholder="Current password"
-                 value={curPass} onChange={e => setCurPass(e.target.value)} />
-          <input className="form-control form-control-sm mb-2" type="password" placeholder="New password"
-                 value={newOwnPass} onChange={e => setNewOwnPass(e.target.value)} />
-          <button className="btn btn-sm btn-warning" onClick={handleOwnPassword}>Change</button>
-          {ownMsg && <p className="mt-1 mb-0 small text-muted">{ownMsg}</p>}
+          <form onSubmit={e => { e.preventDefault(); handleOwnPassword() }}>
+            <input className="form-control form-control-sm mb-2" type="password" placeholder="Current password"
+                   value={curPass} onChange={e => setCurPass(e.target.value)} />
+            <input className="form-control form-control-sm mb-2" type="password" placeholder="New password"
+                   value={newOwnPass} onChange={e => setNewOwnPass(e.target.value)} />
+            <button className="btn btn-sm btn-warning" type="submit">Change</button>
+            {ownMsg && <p className="mt-1 mb-0 small text-muted">{ownMsg}</p>}
+          </form>
         </div>
 
         <hr />
 
         <div className="mb-3">
           <h5>Admin: Change User Password</h5>
-          <input className="form-control form-control-sm mb-2" type="email" placeholder="User email"
-                 value={adminMail} onChange={e => setAdminMail(e.target.value)} />
-          <input className="form-control form-control-sm mb-2" type="password" placeholder="New password"
-                 value={adminNewPass} onChange={e => setAdminNewPass(e.target.value)} />
-          <button className="btn btn-sm btn-danger" onClick={handleAdminPassword}>Set Password</button>
-          {adminMsg && <p className="mt-1 mb-0 small text-muted">{adminMsg}</p>}
+          <form onSubmit={e => { e.preventDefault(); handleAdminPassword() }}>
+            <input className="form-control form-control-sm mb-2" type="email" placeholder="User email"
+                   value={adminMail} onChange={e => setAdminMail(e.target.value)} />
+            <input className="form-control form-control-sm mb-2" type="password" placeholder="New password"
+                   value={adminNewPass} onChange={e => setAdminNewPass(e.target.value)} />
+            <button className="btn btn-sm btn-danger" type="submit">Set Password</button>
+            {adminMsg && <p className="mt-1 mb-0 small text-muted">{adminMsg}</p>}
+          </form>
         </div>
       </div>
     </div>

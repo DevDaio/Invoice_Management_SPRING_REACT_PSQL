@@ -14,18 +14,20 @@ export default function LandingPage() {
           <div className="card">
             <div className="card-body">
               <h4 className="card-title text-center mb-4">Login</h4>
-              <div className="mb-3">
-                <input className="form-control" type="email" placeholder="Email"
-                       value={email} onChange={e => setEmail(e.target.value)} />
-              </div>
-              <div className="mb-3">
-                <input className="form-control" type="password" placeholder="Password"
-                       value={password} onChange={e => setPassword(e.target.value)} />
-              </div>
-              <button className="btn btn-primary w-100" disabled={!email || !password}
-                      onClick={() => login(email, password)}>
-                Login
-              </button>
+              <form onSubmit={e => { e.preventDefault(); login(email, password) }}>
+                <div className="mb-3">
+                  <input className="form-control" type="email" placeholder="Email"
+                         value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
+                <div className="mb-3">
+                  <input className="form-control" type="password" placeholder="Password"
+                         value={password} onChange={e => setPassword(e.target.value)} />
+                </div>
+                <button className="btn btn-primary w-100" disabled={!email || !password}
+                        type="submit">
+                  Login
+                </button>
+              </form>
             </div>
           </div>
         </div>

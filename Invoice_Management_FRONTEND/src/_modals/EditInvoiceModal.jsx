@@ -85,6 +85,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
       backgroundColor: 'rgba(0,0,0,0.5)'
     }} onClick={onClose}>
       <div className="bg-body rounded shadow p-4" style={{ width: '1100px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+        <form onSubmit={e => { e.preventDefault(); handleSave() }}>
         <h4 className="mb-3">Edit Invoice</h4>
 
         <div className="row mb-3">
@@ -118,7 +119,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
               </span>
             </label>
           </div>
-          <button className="btn btn-sm btn-outline-success" onClick={addArticle}>+ Add Article</button>
+          <button className="btn btn-sm btn-outline-success" type="button" onClick={addArticle}>+ Add Article</button>
         </div>
 
         <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
@@ -175,7 +176,7 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
                   </td>
                   <td>
                     {articles.length > 1 && (
-                      <button className="btn btn-sm btn-outline-danger" onClick={() => removeArticle(i)}>✕</button>
+                      <button className="btn btn-sm btn-outline-danger" type="button" onClick={() => removeArticle(i)}>✕</button>
                     )}
                   </td>
                 </tr>
@@ -193,10 +194,10 @@ export default function EditInvoiceModal({ show, onClose, onSave, invoice }) {
         </div>
 
         <div className="d-flex justify-content-end gap-2">
-          <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn btn-primary" disabled={!number || !date || !supplier}
-                  onClick={handleSave}>Save Changes</button>
+          <button className="btn btn-secondary" type="button" onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" type="submit" disabled={!number || !date || !supplier}>Save Changes</button>
         </div>
+        </form>
       </div>
     </div>
   )
