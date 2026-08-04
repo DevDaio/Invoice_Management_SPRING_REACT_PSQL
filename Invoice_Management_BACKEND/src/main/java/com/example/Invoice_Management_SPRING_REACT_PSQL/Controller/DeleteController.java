@@ -7,6 +7,7 @@ import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.Article;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.Invoice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
@@ -30,6 +31,9 @@ public class DeleteController {
 
     @DeleteMapping("/user")
     public ResponseEntity<?> deleteUser(@RequestBody DeleteRequest request) {
+        if (request.getMail() == null || request.getMail().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mail is required");
+        }
         if (userRepository.findByMail(request.getMail()).isPresent()) {
             userRepository.deleteByMail(request.getMail());
             return ResponseEntity.noContent().build();
@@ -40,10 +44,11 @@ public class DeleteController {
 
     @DeleteMapping("/invoice/{id}")
     public ResponseEntity<?> deleteInvoice(@PathVariable int id) {
-        Invoice invoice = invoiceRepository.findById(id).orElse(null);
-        if (invoice == null) {
+        Optional<Invoice> found = invoiceRepository.findById(id);
+        if (found.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invoice " + id + " not found");
         }
+        Invoice invoice = found.get();
         for (Article a : articleRepository.findByInvoiceNumber(invoice.getNumber())) {
             articleRepository.delete(a);
         }

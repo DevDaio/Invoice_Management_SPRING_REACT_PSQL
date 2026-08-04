@@ -5,12 +5,6 @@ import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
-	
-	
 	List<Article> findByInvoiceNumber(String invoiceNumber);
-
-    List<Article> findByName(String name);
-
-    List<Article> findByArticleNumber(String articleNumber);
 
 }

@@ -14,7 +14,7 @@ public class Article {
 	@Column(name = "article_number", nullable = false)
 	private String articleNumber;
 
-	@Column(name = "name", nullable = false, unique = true)
+	@Column(name = "name", nullable = false)
 	private String name;
 
 	@Column(name = "price_net", nullable = false)
@@ -69,7 +69,7 @@ public class Article {
 		return this.name;
 	}
 
-	public double getPriceGroß() {
+	public double getPriceGross() {
 		return this.priceNet * (1 + this.tax.getTaxRate() / 100.0);
 	}
 

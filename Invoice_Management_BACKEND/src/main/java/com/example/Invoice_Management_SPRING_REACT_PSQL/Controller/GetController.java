@@ -35,46 +35,58 @@ public class GetController {
 
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Integer id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User nicht gefunden");
-        }
-        return ResponseEntity.ok(user);
+        return userRepository.findById(id)
+                .<ResponseEntity<?>>map(user -> ResponseEntity.ok(user))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("User nicht gefunden"));
     }
 
     @GetMapping("/suppliers")
-    public List<Supplier> getSuppliers(@RequestParam(required = false) String name) {
-        if (name != null) return List.of(supplierRepository.findByName(name));
-        return supplierRepository.findAll();
+    public ResponseEntity<?> getSuppliers(@RequestParam(required = false) String name) {
+        if (name != null) {
+            Supplier supplier = supplierRepository.findByName(name);
+            if (supplier == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Supplier nicht gefunden");
+            }
+            return ResponseEntity.ok(List.of(supplier));
+        }
+        return ResponseEntity.ok(supplierRepository.findAll());
     }
 
     @GetMapping("/articles")
-    public List<Article> getArticles(@RequestParam(required = false) String name,
+    public ResponseEntity<?> getArticles(@RequestParam(required = false) String name,
                                      @RequestParam(required = false) Integer articleNumber,
                                      @RequestParam(required = false) String invoiceNumber) {
-        if (name != null) return articleRepository.findByName(name);
-        if (articleNumber != null) return articleRepository.findByArticleNumber(String.valueOf(articleNumber));
-        if (invoiceNumber != null) return articleRepository.findByInvoiceNumber(invoiceNumber);
-        return articleRepository.findAll();
+        if (name == null && articleNumber == null && invoiceNumber == null) {
+            return ResponseEntity.ok(articleRepository.findAll());
+        }
+
+        return ResponseEntity.ok(articleRepository.findAll().stream()
+                .filter(a -> name == null || name.equals(a.getName()))
+                .filter(a -> articleNumber == null || String.valueOf(articleNumber).equals(a.getArticleNumber()))
+                .filter(a -> invoiceNumber == null || invoiceNumber.equals(a.getInvoice().getNumber()))
+                .toList());
     }
 
     @GetMapping("/invoices")
-    public List<Invoice> getInvoices(@RequestParam(required = false) String supplierName,
+    public ResponseEntity<?> getInvoices(@RequestParam(required = false) String supplierName,
                                      @RequestParam(required = false) String number,
                                      @RequestParam(required = false) LocalDate date,
                                      @RequestParam(required = false) Boolean payed,
                                      @RequestParam(required = false) Integer articleNumber) {
-        if (supplierName != null && date != null && payed != null && articleNumber != null)
-            return invoiceRepository.findBySupplierNameAndDateAndPayedAndArticles_ArticleNumber(supplierName, date, payed, String.valueOf(articleNumber));
-        if (supplierName != null && date != null && payed != null)
-            return invoiceRepository.findBySupplierNameAndDateAndPayed(supplierName, date, payed);
-        if (supplierName != null && date != null)
-            return invoiceRepository.findBySupplierNameAndDate(supplierName, date);
-        if (supplierName != null) return invoiceRepository.findBySupplierName(supplierName);
-        if (number != null) return List.of(invoiceRepository.findByNumber(number));
-        if (date != null) return invoiceRepository.findByDate(date);
-        if (payed != null) return invoiceRepository.findByPayed(payed);
-        if (articleNumber != null) return invoiceRepository.findByArticles_ArticleNumber(String.valueOf(articleNumber));
-        return invoiceRepository.findAll();
+        if (number != null) {
+            Invoice invoice = invoiceRepository.findByNumber(number);
+            if (invoice == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rechnung nicht gefunden");
+            }
+            return ResponseEntity.ok(List.of(invoice));
+        }
+
+        return ResponseEntity.ok(invoiceRepository.findAll().stream()
+                .filter(i -> supplierName == null || supplierName.equals(i.getSupplier().getName()))
+                .filter(i -> date == null || date.equals(i.getDate()))
+                .filter(i -> payed == null || payed.equals(i.isPayed()))
+                .filter(i -> articleNumber == null || i.getArticles().stream()
+                        .anyMatch(a -> String.valueOf(articleNumber).equals(a.getArticleNumber())))
+                .toList());
     }
 }

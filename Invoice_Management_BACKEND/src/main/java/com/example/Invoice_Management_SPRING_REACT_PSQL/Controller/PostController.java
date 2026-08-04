@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;                                                     
 import java.util.ArrayList;                                                
 import java.util.Map;                                                      
+import java.util.Optional;                                                 
 import org.springframework.http.HttpStatus;                                
 import org.springframework.http.ResponseEntity;                            
 import org.springframework.web.bind.annotation.*;                          
@@ -89,21 +90,21 @@ public class PostController {
 
     @PostMapping("/login")                                                 
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {   
-        User user = userRepository.findByMail(request.getMail())           
-                .orElse(null);                                             
-
-        if (user == null) {                                                
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)          
-                    .body("Mail oder Passwort sind inkorrekt");            
+        if (request.getMail() == null || request.getPassword() == null) {  
+            return ResponseEntity.badRequest()                             
+                    .body("Mail und Passwort sind erforderlich");          
         }
 
-        if (!Crypting.checkPassword(user, request.getPassword())) {       
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)          
-                    .body("Mail oder Passwort sind inkorrekt");            
+        Optional<User> found = userRepository.findByMail(request.getMail());
+
+        if (found.isEmpty() || !Crypting.checkPassword(found.get(), request.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Mail oder Passwort sind inkorrekt");
         }
 
-        return ResponseEntity.ok(                                          
-                Map.of("token", jwtService.generateToken(user.getMail(), user.getRole()))  
+        User user = found.get();
+        return ResponseEntity.ok(
+                Map.of("token", jwtService.generateToken(user.getMail(), user.getRole()))
         );
     }
 
@@ -122,8 +123,17 @@ public class PostController {
 
         List<Article> articles = new ArrayList<>();                        
         for (ArticleRequest ar : request.getArticles()) {                  
+            UnitType unit;
+            TaxType tax;
+            try {
+                unit = UnitType.valueOf(ar.getUnit());
+                tax = TaxType.valueOf(ar.getTax());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest()
+                        .body("Ungültige Einheit oder Steuersatz: " + ar.getUnit() + " / " + ar.getTax());
+            }
             Article article = new Article(ar.getArticleNumber(), ar.getName(), ar.getPriceNet(),
-                UnitType.valueOf(ar.getUnit()), TaxType.valueOf(ar.getTax()), ar.getQuantity(), supplier);
+                unit, tax, ar.getQuantity(), supplier);
             articles.add(article);                                         
         }
 

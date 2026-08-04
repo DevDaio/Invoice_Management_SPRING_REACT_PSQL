@@ -1,6 +1,7 @@
 package com.example.Invoice_Management_SPRING_REACT_PSQL.Classes;   
 import com.example.Invoice_Management_SPRING_REACT_PSQL.Security.Crypting; 
 import jakarta.persistence.*;                                         
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity                                                               
 @Table(name = "users")                                                
@@ -44,7 +45,7 @@ public class User {
     public String getMail() {                                        
         return mail;
     }
-
+    @JsonIgnore
     public String getPassword() {                                    
         return password;
     }
@@ -61,9 +62,8 @@ public class User {
         this.mail = mail;
     }
 
-    public String setPassword(String password) {                     
-        this.password = Crypting.encryptPassword(password);           
-        return this.password;                                         
+    public void setPassword(String password) {                           
+        this.password = Crypting.encryptPassword(password);                  
     }
 
 }

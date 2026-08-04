@@ -1,6 +1,8 @@
 package com.example.Invoice_Management_SPRING_REACT_PSQL.Controller;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;
 import org.springframework.web.bind.annotation.*;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.User;
 import com.example.Invoice_Management_SPRING_REACT_PSQL.Classes.TaxType;
@@ -48,10 +50,11 @@ public class PutController {
         if (request.getMail() == null || request.getMail().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mail is required");
         }
-        User user = userRepository.findByMail(request.getMail()).orElse(null);
-        if (user == null) {
+        Optional<User> found = userRepository.findByMail(request.getMail());
+        if (found.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
+        User user = found.get();
         if (request.getNewMail() != null && !request.getNewMail().isEmpty()) {
             user.setMail(request.getNewMail());
         }
@@ -74,10 +77,11 @@ public class PutController {
         if (request.getPassword() == null || request.getPassword().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required");
         }
-        User user = userRepository.findByMail(request.getMail()).orElse(null);
-        if (user == null) {
+        Optional<User> found = userRepository.findByMail(request.getMail());
+        if (found.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
+        User user = found.get();
         user.setPassword(request.getPassword());
         userRepository.save(user);
         return ResponseEntity.ok().body("Password updated successfully");
@@ -154,10 +158,11 @@ public class PutController {
 
     @PutMapping("/invoice/{id}")
     public ResponseEntity<?> updateInvoice(@PathVariable int id, @RequestBody InvoiceUpdateRequest request) {
-        Invoice invoice = invoiceRepository.findById(id).orElse(null);
-        if (invoice == null) {
+        Optional<Invoice> found = invoiceRepository.findById(id);
+        if (found.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invoice not found");
         }
+        Invoice invoice = found.get();
 
         if (request.getNumber() != null) invoice.setNumber(request.getNumber());
         if (request.getDate() != null) invoice.setDate(request.getDate());
@@ -173,18 +178,39 @@ public class PutController {
         }
 
         if (request.getArticles() != null) {
-            for (Article a : articleRepository.findByInvoiceNumber(invoice.getNumber())) {
-                a.setInvoice(null);
-                articleRepository.delete(a);
-            }
-            for (ArticleRequest ar : request.getArticles()) {
-                Article article = new Article(
-                    ar.getArticleNumber(), ar.getName(), ar.getPriceNet(),
-                    UnitType.valueOf(ar.getUnit()), TaxType.valueOf(ar.getTax()),
-                    ar.getQuantity(), invoice.getSupplier()
-                );
-                article.setInvoice(invoice);
+            List<Article> existing = new ArrayList<>(invoice.getArticles());
+            for (int i = 0; i < request.getArticles().size(); i++) {
+                ArticleRequest ar = request.getArticles().get(i);
+                UnitType unit;
+                TaxType tax;
+                try {
+                    unit = UnitType.valueOf(ar.getUnit());
+                    tax = TaxType.valueOf(ar.getTax());
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Ungültige Einheit oder Steuersatz: " + ar.getUnit() + " / " + ar.getTax());
+                }
+                Article article;
+                if (i < existing.size()) {
+                    article = existing.get(i);
+                    article.setArticleNumber(ar.getArticleNumber());
+                    article.setName(ar.getName());
+                    article.setPriceNet(ar.getPriceNet());
+                    article.setUnit(unit);
+                    article.setTax(tax);
+                    article.setQuantity(ar.getQuantity());
+                } else {
+                    article = new Article(
+                        ar.getArticleNumber(), ar.getName(), ar.getPriceNet(),
+                        unit, tax,
+                        ar.getQuantity(), invoice.getSupplier()
+                    );
+                    article.setInvoice(invoice);
+                }
                 articleRepository.save(article);
+            }
+            for (int i = request.getArticles().size(); i < existing.size(); i++) {
+                articleRepository.delete(existing.get(i));
             }
         }
 

@@ -20,7 +20,9 @@ public class InvoiceManagementSpringReactPsqlApplication {
         return args -> {                                                                     
             List<User> users = userRepository.findAll();                                     
             if (users.isEmpty()) {                                                           
-                User user = new User("admin@admin.com", "admin", "ADMIN");                  
+                String adminMail = System.getenv().getOrDefault("APP_ADMIN_MAIL", "admin@admin.com");             
+                String adminPassword = System.getenv().getOrDefault("APP_ADMIN_PASSWORD", "admin");               
+                User user = new User(adminMail, adminPassword, "ADMIN");                  
                 userRepository.save(user);                                                   
             }
         };
