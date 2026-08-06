@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 
-import { api, getToken } from '../_helpers/api'
+import { api } from '../_helpers/api'
+import { useAuth } from './AuthContext'
 const InvoiceContext = createContext(null)
 
 const TAX_RATES = { Tax0: 0, Tax7: 0.07, Tax19: 0.19 }
@@ -62,13 +63,23 @@ export function InvoiceProvider({ children }) {
 
   const [invoices, setInvoices] = useState([])
 
-  useEffect(() => {
-    if (getToken()) {
-      api('/invoices')
-        .then(data => setInvoices(data.map(mapBackendInvoice)))
-        .catch(console.error)
-    }
+  const fetchInvoices = useCallback(() => {
+    api('/invoices')
+      .then(data => setInvoices(data.map(mapBackendInvoice)))
+      .catch(console.error)
   }, [])
+
+  const { isLoggedIn } = useAuth()
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setInvoices([])
+      return
+    }
+    fetchInvoices()
+    const interval = setInterval(fetchInvoices, 30000)
+    return () => clearInterval(interval)
+  }, [isLoggedIn, fetchInvoices])
 
   const addInvoice = async (data) => {
     const body = mapToBackendInvoice(data)
