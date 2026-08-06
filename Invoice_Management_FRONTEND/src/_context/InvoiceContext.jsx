@@ -77,8 +77,15 @@ export function InvoiceProvider({ children }) {
       return
     }
     fetchInvoices()
-    const interval = setInterval(fetchInvoices, 30000)
-    return () => clearInterval(interval)
+    const interval = setInterval(fetchInvoices, 10000)
+
+    const onVisible = () => { document.visibilityState === 'visible' && fetchInvoices() }
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [isLoggedIn, fetchInvoices])
 
   const addInvoice = async (data) => {
