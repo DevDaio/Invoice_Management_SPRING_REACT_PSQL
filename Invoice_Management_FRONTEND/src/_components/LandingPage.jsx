@@ -19,18 +19,8 @@ export default function LandingPage() {
             </svg>
           </div>
           <h1 className="login-app-name">INVOICE MANAGEMENT</h1>
-          <p className="login-tagline">
-            Vom SQL-Schema bis zur AWS-Cloud &mdash;
-            <br />Full-Stack, voll automatisiert.
-          </p>
-          <div className="login-tech-badges">
-            <span className="tech-badge">Java</span>
-            <span className="tech-badge">Spring Boot</span>
-            <span className="tech-badge">React</span>
-            <span className="tech-badge">PostgreSQL</span>
-            <span className="tech-badge">Docker</span>
-            <span className="tech-badge">AWS</span>
-          </div>
+
+
         </div>
       </div>
 
