@@ -8,11 +8,13 @@ import './App.css'
 
 function AppInner() {
   const { isLoggedIn } = useAuth()
+  if (!isLoggedIn) return <LandingPage />
+
   return (
     <div className="app-layout">
       <Sidebar />
       <div className="app-content">
-        {isLoggedIn ? <MainPage /> : <LandingPage />}
+        <MainPage />
       </div>
     </div>
   )

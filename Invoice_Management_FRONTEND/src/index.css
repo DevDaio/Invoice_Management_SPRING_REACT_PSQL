@@ -50,3 +50,223 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+
+/* ===== LOGIN PAGE ===== */
+
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #121417;
+}
+
+.login-branding {
+  flex: 0 0 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(25, 135, 84, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 80%, rgba(25, 135, 84, 0.06) 0%, transparent 50%),
+    #121417;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-branding::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.login-branding-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 440px;
+  padding: 2rem;
+  animation: loginFadeIn 0.8s ease-out;
+}
+
+.login-logo {
+  margin-bottom: 1.25rem;
+}
+
+.login-app-name {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.login-tagline {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.login-tech-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  letter-spacing: 0.02em;
+}
+
+.login-form-panel {
+  flex: 0 0 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d0f13;
+  padding: 2rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  backdrop-filter: blur(12px);
+  animation: loginCardUp 0.6s ease-out;
+}
+
+.login-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.login-subtext {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 2rem;
+}
+
+.login-input-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+
+.login-input-group:focus-within .login-input-icon {
+  color: var(--accent);
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.login-input:focus {
+  border-color: var(--accent);
+  background: rgba(25, 135, 84, 0.04);
+}
+
+.login-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: #157347;
+  box-shadow: 0 4px 16px rgba(25, 135, 84, 0.3);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.login-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@keyframes loginFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes loginCardUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 800px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .login-branding {
+    flex: 0 0 auto;
+    padding: 2.5rem 1.5rem 1.5rem;
+  }
+
+  .login-branding-inner {
+    text-align: center;
+  }
+
+  .login-tech-badges {
+    justify-content: center;
+  }
+
+  .login-form-panel {
+    flex: 0 0 auto;
+    padding: 1.5rem;
+  }
+
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+}
